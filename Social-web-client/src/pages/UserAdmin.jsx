@@ -17,38 +17,58 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { UserAdmin } from "../fetchers/auth";
 import { useApp } from "../ThemeApp";
 import { DataGrid } from "@mui/x-data-grid";
+import{useTheme,useMediaQuery}from "@mui/material"
 export default function Useradmin() {
+  const theme=useTheme();
+  const isMobile=useMediaQuery(theme.breakpoints.down("sm"));
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     {
       field: "user",
       headerName: "User",
       flex: 1,
-      minWidth: 180,
-      renderCell: (params) => (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <Avatar src={params.row.image || ""} sx={{ width: 35, height: 35 }}>
+       width: isMobile ? 150 : 180,
+      renderCell: (params) => {
+        console.log(params);
+        console.log("First user:", data?.user?.[0]);
+        return(
+  <Box sx={{ display: "flex", alignItems: "center", gap: {sm:3,xs:2} ,mt:isMobile?1.6:2}}>
+           
+          <Avatar src={params.row.image || ""} sx={{ width: {sm:35,xs:25}, height: {sm:35,xs:25} }}>
             {params.row.user?.[0]?.toUpperCase()}
           </Avatar>
-          <Typography>{params.row.user}</Typography>
+          {!isMobile?(<Typography>{params.row.user}</Typography>):(<Typography sx={{fontSize:11}}>{params.row.username}</Typography>)}
+          
         </Box>
-      ),
+      
+        )
+      }
+        
+      
     },
-    { field: "username", headerName: "UserName", flex: 1 },
+     { field: "username", headerName: "UserName", flex: 1 },
+   
 
-    { field: "role", headerName: "Role", width: 70 },
+    { field: "role", headerName: "Role",  width: isMobile ? 80 : 70,renderCell:(params)=>(
+      <Typography sx={{  pl: isMobile ? 1 : 2,
+        fontSize: { xs: 12, sm: 14 },mt:2}}>
+          {params.value}
+      </Typography>
+    ) },
     {
       field: "isBanned",
       headerName: "Status",
+      width: isMobile ? 90 : 70,
       renderCell: (params) => (
         <Typography
           sx={{
             fontSize: { xs: 12, sm: 14 },
             fontWeight: 600,
-            color: params.value === true ? "green" : "red",
+            mt:2,
+            color: params.row.isBanned === true ? "red" : "green",
           }}
         >
-          {params.value === true ? "Banned" : "Active"}
+          {params.row.isBanned === true ? "Banned" : "Active"}
         </Typography>
       ),
     },
@@ -86,7 +106,7 @@ export default function Useradmin() {
     username: user.username,
 
     role: user.role,
-    isBanned: user.isBanned ? "Banned" : "Active",
+    isBanned: user.isBanned,
     user: user.name,
   }));
   return (
@@ -144,11 +164,24 @@ export default function Useradmin() {
           </Box>
         </Box>
 
-        <Box>
+        <Box sx={{mt:2}}>
           <DataGrid
             rows={rows}
             columns={columns}
             autoHeight
+            columnVisibilityModel={{
+              id:!isMobile,
+              username: !isMobile,
+
+            }}
+            initialState={{
+              pagination:{
+                paginationModel:{
+                  page:0,
+                  pageSize:10
+                }
+              }
+            }}
             pageSizeOptions={[5, 10, 25]}
           />
         </Box>

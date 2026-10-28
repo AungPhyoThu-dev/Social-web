@@ -117,9 +117,9 @@ const [expandedPost,setExpandedPost]=useState(null);
 const [storeImage,setStoreImage]=useState([]);
 const [selectedImage,setSelectedImage]=useState([]);
 const [accountDetailOpen,setAccountDetailOpen]=useState(false)
-const [personDetailOpen,setPersonDetailOpen]=useState(false);
+const [personDetailOpen,setPersonDetailOpen]=useState(true);
 
-const [workexperience,setWorkExperience]=useState(false);
+const [workexperience,setWorkExperience]=useState(true);
 const[editField,setEditField]=useState(null);
 const [showPassword,setShowPassword]=useState(false);
 const[birthday,setBirthday]=useState("");
