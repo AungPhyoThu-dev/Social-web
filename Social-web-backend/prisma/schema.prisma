@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  role String @default("user")
+  password String
+  bio String?
+  image String?
+  birthday DateTime?
+  country String?
+  city String?
+  gender String?
+  phoneNumber String?
+  email String?
+  relationship String?
+  jobtitle String?
+  company String?
+  posts Post[]
+  profileBgColor String? @default("#667eea")
+  comments Comment[]
+  followers Follow[] @relation("follower")
+  following Follow[] @relation("following")
+  postLikes PostLike[]
+    isBanned  Boolean @default(false)
+    isActive Boolean @default(false)
+commentLikes CommentLike[]
+savePosts SavePost[]
+  created DateTime @default(now())
+}
+
+model Post{
+  id Int @id @default(autoincrement())
+  content String?
+   feeling  String?
+  emoji    String?
+  images PostImage[]
+  user User @relation(fields:[userId],references:[id])
+  userId Int
+  postLikes PostLike[]
+  
+  comments Comment[]
+savePosts SavePost[]
+  created DateTime @default(now())
+}
+model PostImage{
+  id Int @id @default(autoincrement())
+  url String
+  post Post @relation(fields:[postId],references:[id],onDelete:Cascade)
+  postId Int
+}
+model Comment{
+  id Int @id @default(autoincrement())
+  content String
+  user User @relation(fields:[userId],references:[id])
+  userId Int
+  post Post @relation(fields:[postId],references:[id])
+  postId Int
+  commentLikes CommentLike[]
+  parentId Int?
+  parent Comment? @relation("Replies",fields:[parentId],references:[id])
+  Replies Comment[] @relation("Replies")
+  created DateTime @default(now())
+}
+
+model PostLike{
+  id Int @id @default(autoincrement())
+  post Post @relation(fields:[postId],references:[id])
+  postId Int 
+  user User @relation(fields:[userId],references:[id])
+  userId Int
+  created DateTime @default(now())
+}
+
+
+model CommentLike{
+  id Int @id @default(autoincrement())
+  comment Comment @relation(fields:[commentId],references:[id])
+  commentId Int
+  user User @relation(fields:[userId],references:[id])
+  userId Int
+created DateTime @default(now())
+}
+
+model Follow {
+  id Int @id @default(autoincrement())
+  follower User @relation("follower", fields:[followerId],references:[id])
+  followerId Int
+  following User @relation("following",fields:[followingId],references:[id])
+  followingId Int
+created DateTime @default(now())
+}
+
+model SavePost{
+  id Int @id @default(autoincrement())
+  user User @relation(fields:[userId],references:[id])
+  userId Int
+  post Post @relation(fields:[postId],references:[id])
+  postId Int
+
+
+}

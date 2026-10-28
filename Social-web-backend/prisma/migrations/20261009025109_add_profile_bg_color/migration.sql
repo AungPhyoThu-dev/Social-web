@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN "birthday" DATETIME;
+ALTER TABLE "User" ADD COLUMN "city" TEXT;
+ALTER TABLE "User" ADD COLUMN "company" TEXT;
+ALTER TABLE "User" ADD COLUMN "country" TEXT;
+ALTER TABLE "User" ADD COLUMN "jobtitle" TEXT;
+ALTER TABLE "User" ADD COLUMN "profileBgColor" TEXT DEFAULT '#667eea';
+ALTER TABLE "User" ADD COLUMN "relationship" TEXT;
