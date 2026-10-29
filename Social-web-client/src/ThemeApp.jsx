@@ -136,7 +136,10 @@ const[changeGender,setChangeGender]=useState(null);
 const [changeCompany,setChangeCompany]=useState(null);
 const [changeJobTitle,setChangeJobTitle]=useState(null)
 const [selectProfileImage,setSelectProfileImage]=useState(null)
-const[adminOpen,setAdminOpen]=useState(false)
+const[adminOpen,setAdminOpen]=useState(false);
+const[formControlValue,setFormControlValue]=useState("all")
+const [userSearch,setUserSearch]=useState("")
+const [adminSelect,setAdminSelect]=useState(null)
   const theme=useMemo(()=>{
     return createTheme({
       palette:{
@@ -169,7 +172,7 @@ LoadUser()
  workexperience,setWorkExperience,editField,setEditField,
   showPassword,setShowPassword,birthday,setBirthday,openDropDown,setOpenDropDown,selectBgColor,setSelectBgColor,changeUsername,setChangeUsername,changePassword,setChangePassword,changeCountry,setChangeCountry,changeCity,setChangeCity,changeBio,setChangeBio,changeBirthday,setChangeBirthday,
 
-  changeRelation,setChangeRelation,changeGender,setChangeGender,changeCompany,setChangeCompany,changeJobTitle,setChangeJobTitle,selectProfileImage,setSelectProfileImage,adminOpen,setAdminOpen
+  changeRelation,setChangeRelation,changeGender,setChangeGender,changeCompany,setChangeCompany,changeJobTitle,setChangeJobTitle,selectProfileImage,setSelectProfileImage,adminOpen,setAdminOpen,formControlValue,setFormControlValue,userSearch,setUserSearch,adminSelect,setAdminSelect
 }}>
 <QueryClientProvider client={queryClient}>
   <RouterProvider router={router}></RouterProvider>

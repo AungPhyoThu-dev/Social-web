@@ -570,6 +570,14 @@ export async function UserAdmin(){
     
   }
 }
+export async function AdminSelect(id,isBanned){
+  const token=getToken();
+  try {
+    const res=await
+  } catch (error) {
+    
+  }
+}
 export async function Logout(){
   const token=getToken();
   try {
