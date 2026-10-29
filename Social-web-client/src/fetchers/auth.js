@@ -570,14 +570,32 @@ export async function UserAdmin(){
     
   }
 }
-export async function AdminSelect(id,isBanned){
+export async function AdminSelectBan(id,isBanned){
   const token=getToken();
   try {
-    const res=await
+    const res=await fetch(`${api}/useradmin/isbanned`,{
+      method:"PATCH",
+      headers:{
+        Authorization:`Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        id,
+        isBanned
+      }),
+
+    });
+    const data=await res.json();
+    if(!res.ok){
+      throw new Error("Fatch to failed banned user")
+    }
+    return data;
   } catch (error) {
-    
+    console.log(error)
+    throw error;
   }
 }
+
 export async function Logout(){
   const token=getToken();
   try {

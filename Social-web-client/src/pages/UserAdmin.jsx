@@ -12,18 +12,30 @@ import {
   Card,
   Avatar,
 } from "@mui/material";
+import{AdminSelectBan} from "../fetchers/auth";
 import { SwapCalls, People as UsersIcon } from "@mui/icons-material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UserAdmin } from "../fetchers/auth";
-import { useApp } from "../ThemeApp";
+import { queryClient, useApp } from "../ThemeApp";
 import { DataGrid } from "@mui/x-data-grid";
 import{useTheme,useMediaQuery}from "@mui/material"
 export default function Useradmin() {
   const AdminSelectMutation=useMutation({
-    mutationKey:["isBan"],
-    mutationFn:
+    mutationKey:["isBanned"],
+    mutationFn:async({id,isBanned})=>{
+      return AdminSelectBan(id,isBanned)
+    },
+    onSuccess:async(data,variables)=>{
+      await queryClient.invalidateQueries({
+        queryKey:["useradmin"]
+      })
+    setGlobalMsg(variables.isBanned? "User has been banned":"User has been activated")
+    },
+    onError:(error)=>{
+      console.log(error)
+    }
   })
-  const{formControlValue,setFormControlValue,userSearch,setUserSearch,adminSelect,setAdminSelect}=useApp();
+  const{formControlValue,setFormControlValue,userSearch,setUserSearch,setGlobalMsg}=useApp();
   const theme=useTheme();
   const isMobile=useMediaQuery(theme.breakpoints.down("sm"));
   const columns = [
@@ -55,10 +67,31 @@ export default function Useradmin() {
    
 
     { field: "role", headerName: "Role",  flex:isMobile?0:1,    width: isMobile ? 90 : 100,renderCell:(params)=>(
-      <Typography sx={{  pl: isMobile ? 3  : 2,
+      <Box sx={{display:"flex",gap:{sm:2,xs:1}}}>
+          <Typography sx={{  pl: isMobile ? 1  : 2,
         fontSize: { xs: 12, sm: 14 },mt:2}}>
           {params.value}
       </Typography>
+      <FormControl size="small" sx={{width:isMobile?80:30,mt:{sm:1,xs:1.4}}}>
+        <Select displayEmpty renderValue={() => ""} value={params.row.role} onChange={(e)=>{
+          const role=e.target.value;
+
+        }}  sx={{  height: isMobile ? 30 : 36,
+          
+            "& .MuiOutlinedInput-notchedOutline": {
+        border: "none",
+      },
+          "& .MuiSelect-select": {
+            py: 0.5,
+            px: 1,
+            
+          },}}>
+          <MenuItem value="user">user</MenuItem>
+          <MenuItem value="admin">Admin</MenuItem>
+        </Select>
+      </FormControl>
+      </Box>
+    
     ) },
     {
       field: "isBanned",
@@ -78,9 +111,13 @@ export default function Useradmin() {
           {params.row.isBanned === true ? "Banned" : "Active"}
         </Typography>
         <FormControl size="small" sx={{width:isMobile?80:30,mt:{sm:1,xs:1.4}}}>
-          <Select  displayEmpty   renderValue={() => ""} value={adminSelect} onChange={(e)=>{
+          <Select  displayEmpty   renderValue={() => ""} value={params.row.isBanned?"ban":"active"} onChange={(e)=>{
             const isBanned=e.target.value==="ban";
-            setAdminSelect(e.target.value)
+            
+            AdminSelectMutation.mutate({
+              id:params.row.id,
+              isBanned:isBanned
+            })
           }} sx={{  height: isMobile ? 30 : 36,
           
             "& .MuiOutlinedInput-notchedOutline": {

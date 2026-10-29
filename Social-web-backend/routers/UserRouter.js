@@ -377,6 +377,22 @@ router.get("/dashboard",isAuth,isAdmin(),async(req,res)=>{
     return res.status(500).json({error:error.message})
   }
 })
+router.patch("/useradmin/isbanned",isAuth,isAdmin(),async(req,res)=>{
+  try {
+    const{id,isBanned}=req.body;
+    const data=await prisma.user.update({
+      where:{id:Number(id)},
+      data:{
+        isBanned:isBanned
+      }
+    })
+    return res.status(200).json({msg:"User Status updat is successfully"})
+  } catch (error) {
+    res.status(500).json({
+      error:error.message
+    })
+  }
+})
   router.get("/useradmin",isAuth,isAdmin(),async(req,res)=>{
    
 
