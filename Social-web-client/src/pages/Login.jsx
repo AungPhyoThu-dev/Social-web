@@ -24,8 +24,8 @@ export default function Login() {
  
   const login = useMutation({
     mutationFn: (data) => LoginUser(data),
-    onError:async()=>{
-      setError("Cannot login")
+    onError:(err)=>{
+      setError(err?.message)
     },
     onSuccess:async result=>{
       localStorage.setItem("token",result.token);
@@ -50,11 +50,12 @@ console.log(auth);
       <Typography  sx={{ mb: 2,fontSize:26 }}>
         Login
       </Typography>
-      {error && <Alert severity="warning">{error}</Alert>}
+      {error && <Alert sx={{mb:2}} severity="warning">{error}</Alert>}
       <form onSubmit={ handleSubmit} style={{width:"100%"}}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography variant="caption" sx={{mb:1}}>Username</Typography>
           <TextField
+            onChange={() =>setError(null)}
           sx={{mb:1}}
             placeholder="Username"
             name="username"
@@ -66,6 +67,7 @@ console.log(auth);
             Password
           </Typography>
           <TextField
+            onChange={() => setError(null)}
           sx={{mb:1}}
             type="password"
             name="password"

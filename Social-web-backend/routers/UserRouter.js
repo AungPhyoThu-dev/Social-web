@@ -7,6 +7,7 @@ const {isAuth,isAdmin}=require("../middleware/auth");
 const prisma=new PrismaClient();
 const jwt=require("jsonwebtoken");
 const upload = require("../middleware/upload");
+const { ro } = require("@faker-js/faker");
 router.get("/users",async(req,res)=>{
   try {
     const data=await prisma.user.findMany({
@@ -78,41 +79,43 @@ router.delete("/users/:id",async(req,res)=>{
     res.status(500).json({error:error})
   }
 })
-router.post("/login",async(req,res)=>{
-  try {
-    const {username,password}=req.body;
-    if(!username||!password){
-      return res.status(400).json({msg:"Username and Password is required"})
+  router.post("/login",async(req,res)=>{
+    try {
+      const {username,password}=req.body;
+      if(!username||!password){
+        return res.status(400).json({msg:"Username and Password is required"})
+      }
+      const user=await prisma.user.findUnique({
+        where:{username}
+      })
+      if(!user){
+        return res.status(401).json({msg:"Invalid username and passsword"})
+      }
+    if(user.isBanned){
+      return res.status(403).json({msg:"Your account has been banned. You cannot log in."})
     }
-    const user=await prisma.user.findUnique({
-      where:{username}
+    const isMatch= await bcrypt.compare(password,user.password);
+    if(!isMatch){
+      return res.status(401).json({msg:"Invalid Username and password"})
+    }
+    const updatedUser=await prisma.user.update({
+      where:{id:user.id},
+      data:{
+        isActive:true,
+      }
     })
-    if(!user){
-      return res.status(401).json({msg:"Invalid username and passsword"})
+    const token=jwt.sign({
+      id:updatedUser.id,
+      username:updatedUser.username,
+      bio:updatedUser.bio,
+      image:updatedUser.image,
+      role:updatedUser.role,
+    },process.env.JWT_SECRET)
+    return res.json({token,user:updatedUser})
+    } catch (error) {
+      res.status(500).json({error:error.message})
     }
-   
-   const isMatch= await bcrypt.compare(password,user.password);
-   if(!isMatch){
-    return res.status(401).json({msg:"Invalid Username and password"})
-   }
-   const updatedUser=await prisma.user.update({
-    where:{id:user.id},
-    data:{
-      isActive:true,
-    }
-   })
-   const token=jwt.sign({
-    id:updatedUser.id,
-    username:updatedUser.username,
-    bio:updatedUser.bio,
-    image:updatedUser.image,
-    role:updatedUser.role,
-   },process.env.JWT_SECRET)
-   return res.json({token,user:updatedUser})
-  } catch (error) {
-    res.status(500).json({error:error.message})
-  }
-});
+  });
 
 
 router.get("/verify",isAuth,async(req,res)=>{
@@ -386,7 +389,23 @@ router.patch("/useradmin/isbanned",isAuth,isAdmin(),async(req,res)=>{
         isBanned:isBanned
       }
     })
-    return res.status(200).json({msg:"User Status updat is successfully"})
+    return res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json({
+      error:error.message
+    })
+  }
+})
+router.patch("/useradmin/role",isAuth,isAdmin(),async(req,res)=>{
+  try {
+    const {id,role}=req.body;
+    const data=await prisma.user.update({
+      where:{id:Number(id)},
+      data:{
+        role:role
+      }
+    })
+    return res.status(200).json(data)
   } catch (error) {
     res.status(500).json({
       error:error.message

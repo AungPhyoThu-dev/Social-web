@@ -33,16 +33,24 @@ export async function AddPost(data) {
  
 }
 export async function LoginUser(data) {
-  const res=await fetch(`${api}/login`,{
+  try {
+      const res=await fetch(`${api}/login`,{
     method:"POST",
     body:JSON.stringify(data),
     headers:{
       "Content-Type":"application/json"
     }
   })
-if(res.ok){
-  return res.json();
+const result=await res.json();
+if(!res.ok){
+  throw new Error(result.msg||"Failed to fatch login")
 }
+return result
+  } catch (error) {
+    console.log(error);
+    throw error
+  }
+
 }
 
 function getToken(){
@@ -595,7 +603,30 @@ export async function AdminSelectBan(id,isBanned){
     throw error;
   }
 }
-
+export async function  AdminOrUserSelect(id,role) {
+  const token=getToken();
+  try {
+    const res=await fetch (`${api}/useradmin/role`,{
+      method:"PATCH",
+      headers:{
+        "Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+      },
+      body:JSON.stringify({
+        id,
+        role
+      })
+    });
+    const data=await res.json();
+    if(!res.ok){
+      throw new Error("Fatch to failed role for UserAdmin")
+    }
+    return data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 export async function Logout(){
   const token=getToken();
   try {

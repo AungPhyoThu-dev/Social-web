@@ -12,14 +12,26 @@ import {
   Card,
   Avatar,
 } from "@mui/material";
-import{AdminSelectBan} from "../fetchers/auth";
+
 import { SwapCalls, People as UsersIcon } from "@mui/icons-material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { UserAdmin } from "../fetchers/auth";
+import { UserAdmin,AdminOrUserSelect,AdminSelectBan } from "../fetchers/auth";
 import { queryClient, useApp } from "../ThemeApp";
 import { DataGrid } from "@mui/x-data-grid";
 import{useTheme,useMediaQuery}from "@mui/material"
 export default function Useradmin() {
+  const AdminSelectRoleMuation=useMutation({
+    mutationKey:["role"],
+    mutationFn:async({id,role})=>{
+      return AdminOrUserSelect(id,role)
+    },
+    onSuccess:async(data,variables)=>{
+      await queryClient.invalidateQueries({
+        queryKey:["useradmin"]
+      })
+    setGlobalMsg(variables.role==="admin"?"User role changed to Admin":"User role changed to User")
+    }
+  })
   const AdminSelectMutation=useMutation({
     mutationKey:["isBanned"],
     mutationFn:async({id,isBanned})=>{
@@ -46,15 +58,14 @@ export default function Useradmin() {
       flex: 1,
        width: isMobile ? 150 : 170,
       renderCell: (params) => {
-        console.log(params);
-        console.log("First user:", data?.user?.[0]);
+    
         return(
   <Box sx={{ display: "flex", alignItems: "center", gap: {sm:3,xs:2} ,mt:isMobile?1.6:1}}>
            
           <Avatar src={params.row.image || ""} sx={{ width: {sm:35,xs:25}, height: {sm:35,xs:25} }}>
             {params.row.user?.[0]?.toUpperCase()}
           </Avatar>
-          {!isMobile?(<Typography>{params.row.user}</Typography>):(<Typography sx={{fontSize:11}}>{params.row.user}</Typography>)}
+          {!isMobile?(<Typography>{params.row.user}</Typography>):(<Typography sx={{fontSize:11}}>{params.row.username}</Typography>)}
           
         </Box>
       
@@ -69,13 +80,13 @@ export default function Useradmin() {
     { field: "role", headerName: "Role",  flex:isMobile?0:1,    width: isMobile ? 90 : 100,renderCell:(params)=>(
       <Box sx={{display:"flex",gap:{sm:2,xs:1}}}>
           <Typography sx={{  pl: isMobile ? 1  : 2,
-        fontSize: { xs: 12, sm: 14 },mt:2}}>
+        fontSize: { xs: 12, sm: 14 },mt:2,color:params.row.role==="admin" &&"#6B8FC4"}}>
           {params.value}
       </Typography>
       <FormControl size="small" sx={{width:isMobile?80:30,mt:{sm:1,xs:1.4}}}>
         <Select displayEmpty renderValue={() => ""} value={params.row.role} onChange={(e)=>{
           const role=e.target.value;
-
+AdminSelectRoleMuation.mutate({id:params.id,role:role})
         }}  sx={{  height: isMobile ? 30 : 36,
           
             "& .MuiOutlinedInput-notchedOutline": {

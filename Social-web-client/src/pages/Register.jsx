@@ -1,11 +1,14 @@
 import { Box,Container,Typography,TextField,Button,Alert,Card,CardContent } from "@mui/material";
 import{Public as LogoIcon} from "@mui/icons-material"
-import { useRef } from "react";
+import { useRef,useEffect } from "react";
 import { useApp } from "../ThemeApp";
 import { useMutation } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
 import { PostUser } from "../fetchers/auth";
 export default function Register(){
+  useEffect(() => {
+  setError(null);
+}, []);
  const {error,setError,setGlobalMsg}=useApp();
   const navigate=useNavigate();
   const nameRef=useRef();

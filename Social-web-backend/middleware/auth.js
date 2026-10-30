@@ -9,14 +9,21 @@ const prisma=new PrismaClient();
  * @param {express.NextFunction} next
  */
 
-function isAuth(req,res,next){
+async function isAuth(req,res,next){
   const {authorization}=req.headers;
   const token=authorization && authorization.split(" ")[1];
   if(!token){
     return res.status(400).json({msg:"Token is required"})
   }
   try {
-      const user=jwt.verify(token,process.env.JWT_SECRET);
+      const decoded=jwt.verify(token,process.env.JWT_SECRET);
+      const user=await prisma.user.findFirst({
+        where:{id:decoded.id}
+      })
+         if (!user) {
+      return res.status(401).json({ msg: "User not found" });
+    }
+   
       res.locals.user=user;
       next();
   } catch (error) {
