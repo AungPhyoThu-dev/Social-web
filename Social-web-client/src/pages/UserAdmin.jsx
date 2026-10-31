@@ -153,7 +153,7 @@ AdminSelectRoleMuation.mutate({id:params.id,role:role})
     queryKey: ["useradmin"],
     queryFn: async () => UserAdmin(),
   });
-  console.log(data);
+ 
   if (isLoading) {
     return (
       <Box

@@ -1,11 +1,12 @@
 const express=require("express");
 const router=express.Router();
-const {isAuth,isOwner}=require("../middleware/auth")
+const {isAuth,isOwner, isAdmin}=require("../middleware/auth")
 const {PrismaClient}=require("@prisma/client");
 const upload=require("../middleware/upload")
 const prisma=new PrismaClient();
 const cloudinary=require("../config/cloudinary");
 const {Readable}=require("stream");
+const { isatty } = require("tty");
 
 
 router.get("/posts",async(req,res)=>{
@@ -451,5 +452,43 @@ postLikes:{
     return res.status(500).json({msg:error.message})
   }
 })
-
+router.get("/postadmin",isAuth,isAdmin(),async(req,res)=>{
+  try {
+    const[data,totalPosts,totalComments,totalLikes,todayPost]=await Promise.all([
+      prisma.post.findMany({
+        select:{
+          id:true,
+          content:true,
+          images:true,
+          user:{
+            select:{
+              username:true
+            }
+          },
+          _count:{
+            select:{
+              comments:true,
+              postLikes:true
+            }
+          }
+        },
+       
+      }),
+       prisma.post.count(),
+       prisma.comment.count(),
+       prisma.postLike.count(),
+       prisma.post.count({
+        where:{
+          created:{
+            gte:new Date(new Date().setHours(0,0,0,0))
+          }
+        }
+       })
+    ])
+    return res.status(200).json({posts:data,totalPosts,totalComments,totalLikes,todayPost})
+  } catch (error) {
+    console.error("PostAdmin Error:", error);
+    return res.status(500).json({error:error.message})
+  }
+})
 module.exports={ContentRouter:router}

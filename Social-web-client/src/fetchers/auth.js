@@ -578,6 +578,24 @@ export async function UserAdmin(){
     
   }
 }
+export async function PostAdmin() {
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/content/postadmin`,{
+      headers:{
+        Authorization:`Bearer ${token}`
+      },
+    })
+    const data=await res.json();
+    if(!res.ok){
+      throw Error("Failed to fatch PostAdmin data")
+    }
+return data;
+  } catch (error) {
+    console.log(error);
+    throw error
+  }
+}
 export async function AdminSelectBan(id,isBanned){
   const token=getToken();
   try {
