@@ -15,13 +15,19 @@ import {
   Favorite as LikeIcon,
   Comment as CommentIcon,
   CalendarMonth as TodayPostIcon,
+  Visibility as ViewDetailIcon,
+  Delete as DeleteIcon,
+  Flag as ReportIcon,
 } from "@mui/icons-material";
+
 import { useTheme, useMediaQuery } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { PostAdmin } from "../fetchers/auth";
 import { queryClient, useApp } from "../ThemeApp";
 import { useMutation, useQuery } from "@tanstack/react-query";
 export default function Postadmin() {
+  const navigate=useNavigate();
   const { mode } = useApp();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -90,19 +96,37 @@ export default function Postadmin() {
       },
     },
     {field:"user",headerName:"User" ,flex:!isMobile && 1,renderCell:(params)=>(<Box>
-      <Typography sx={{mt:{sm:2,xs:3},fontSize:{sm:13,xs:11}}}>{params.row?.user?.username}</Typography>
+      <Typography sx={{mt:{sm:3,xs:3},fontSize:{sm:13,xs:11}}}>{params.row?.user?.username}</Typography>
     </Box>) },
     {field:"comment",headerName:"Comments",flex:1,renderCell:(params)=>(
       <Box>
-        <Typography>{params.row?.comment}</Typography>
+        <Typography sx={{mt:3,ml:5}}>{params.row?.comment}</Typography>
       </Box>
     )},
     {field:"like",headerName:"PostLikes",flex:1,renderCell:(params)=>(
       <Box>
-        <Typography>{params.row?.like}</Typography>
+        <Typography sx={{mt:3,ml:5}}>{params.row?.like}</Typography>
       </Box>
     )},
-    {field:"action",headerName:"Actions",flex:!isMobile && 1,  }
+    {field:"action",headerName:"Actions",flex:!isMobile && 1, renderCell:(params)=>(
+      <Box sx={{display:"flex",gap:{sm:3,xs:1},mt:{sm:3,xs:3},cursor:"pointer",ml:{xs:2,sm:4}}}>
+        <ViewDetailIcon onClick={(e)=>{
+          e.stopPropagation();
+          navigate(`/postDetail/${params.row.id}`)
+        }} sx={{fontSize:{sm:20,xs:18},   color: "#64B5F6",
+          "&:hover": {
+            color: "#1976D2",
+          },}}/>
+          <ReportIcon onClick={(e)=>{e.stopPropagation();
+            navigate("/admin/report")
+          }}  sx={{fontSize:{sm:20,xs:18},  color: "green",
+         }}/>
+        <DeleteIcon sx={{fontSize:{sm:20,xs:18},  color: "#E57373",
+          "&:hover": {
+            color: "#D32F2F",
+          },}}/>
+      </Box>
+    )  }
   ];
 
   return (

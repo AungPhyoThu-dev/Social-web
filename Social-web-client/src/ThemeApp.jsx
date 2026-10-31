@@ -4,6 +4,7 @@ import { createBrowserRouter,RouterProvider } from "react-router-dom";
 import { QueryClient,QueryClientProvider } from "@tanstack/react-query";
 import { deepOrange } from "@mui/material/colors";
 import Home from "./pages/Home";
+import Report from "./pages/Report";
 import Template from "./Template";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -82,6 +83,10 @@ const router=createBrowserRouter([
       {path:"postadmin",
         element:<Postadmin/>
       },
+      {path:"report",
+        element:<Report/>
+      }
+      
     
     ]
   }

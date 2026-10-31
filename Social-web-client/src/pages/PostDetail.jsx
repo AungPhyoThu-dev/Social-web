@@ -31,6 +31,7 @@ import {
   KeyboardArrowDown as ShowReplyIcon,
   KeyboardArrowUp as HideReplyIcon,
   Favorite as CommentLikeIcon,
+  ArrowBack as BackArrowIcon
 } from "@mui/icons-material";
 import { useApp, queryClient } from "../ThemeApp";
 import {
@@ -267,6 +268,31 @@ export default function PostDetail() {
  console.log(data)
   return (
     <Box>
+      <Box onClick={(e)=>{
+        e.stopPropagation();
+        navigate(-1)
+      }}   sx={{
+          maxWidth: "100%",
+          mx: "auto",
+          mb: 2,
+          height: "auto",
+          width: {
+            sm: 900,
+            xs: "100%",
+          },
+          display:"flex",
+            alignItems: "center",
+    gap: 0.8,
+    cursor: "pointer",
+    color: "text.secondary",
+   
+    p: 1,
+  
+   
+        }}>
+<BackArrowIcon sx={{  color: "text.primary",}}/>
+<Typography>Back</Typography>
+      </Box>
       <Card
         sx={{
           maxWidth: "100%",

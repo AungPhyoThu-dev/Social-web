@@ -40,8 +40,9 @@ import {
 export default function AppDrawer() {
   const theme=useTheme();
   const isMobile=useMediaQuery(theme.breakpoints.down("sm"))
+  const isTablet=useMediaQuery(theme.breakpoints.between("sm","lg"))
   const { auth, showDrawer, setShowDrawer, mode,setAuth,adminOpen,setAdminOpen,setGlobalMsg } = useApp();
-  const openDrawer=isMobile?showDrawer:true;
+  const openDrawer=isMobile||isTablet?showDrawer:true;
   const navigate = useNavigate();
   console.log(auth);
  const logoutMutation=useMutation({
@@ -64,7 +65,7 @@ export default function AppDrawer() {
   return (
     <Drawer
       open={openDrawer}
-      variant={isMobile?"temporary":"permanent"}
+      variant={isMobile||isTablet?"temporary":"permanent"}
 
       onClose={() => {
         setShowDrawer(false);
