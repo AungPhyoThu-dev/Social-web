@@ -83,7 +83,7 @@ const router=createBrowserRouter([
       {path:"postadmin",
         element:<Postadmin/>
       },
-      {path:"report",
+      {path:"report/:postId",
         element:<Report/>
       }
       

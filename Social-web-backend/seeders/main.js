@@ -3,7 +3,7 @@ const {PostSeeder}=require("./PostSeeder");
 const {CommentSeeder}=require("./CommentSeeder");
 const {PostLikeSeeder}=require("./PostLikeSeeder");
 const {CommentLikeSeeder}=require("./CommentLikeSeeder");
-
+const{ReportSeeder}=require("./ReportSeeder")
 async function main(){
   try {
     await UserSeeder();
@@ -11,6 +11,7 @@ async function main(){
     await CommentSeeder();
     await PostLikeSeeder();
     await CommentLikeSeeder();
+    await ReportSeeder();
   } catch (error) {
     console.log(error);
     

@@ -64,7 +64,9 @@ export default function Postadmin() {
     images: post.images,
     user:post.user,
     comment:post._count.comments,
-    like:post._count.postLikes
+    like:post._count.postLikes,
+    post:post
+
   }));
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -117,10 +119,14 @@ export default function Postadmin() {
           "&:hover": {
             color: "#1976D2",
           },}}/>
-          <ReportIcon onClick={(e)=>{e.stopPropagation();
-            navigate("/admin/report")
+          {params.row.post.reports?.length>0?(  <ReportIcon onClick={(e)=>{e.stopPropagation();
+            navigate(`/admin/report/${params.row.id}`)
+          }}  sx={{fontSize:{sm:20,xs:18},  color: "red",
+         }}/>):(  <ReportIcon onClick={(e)=>{e.stopPropagation();
+            navigate(`/admin/report/${params.row.id}`)
           }}  sx={{fontSize:{sm:20,xs:18},  color: "green",
-         }}/>
+         }}/>)}
+        
         <DeleteIcon sx={{fontSize:{sm:20,xs:18},  color: "#E57373",
           "&:hover": {
             color: "#D32F2F",

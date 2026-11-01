@@ -463,8 +463,16 @@ router.get("/postadmin",isAuth,isAdmin(),async(req,res)=>{
           user:{
             select:{
               username:true
-            }
+            },
+
           },
+        reports:{
+        select:{
+          userId:true,
+          postId:true,
+          reason:true
+        }
+       },
           _count:{
             select:{
               comments:true,
@@ -472,7 +480,7 @@ router.get("/postadmin",isAuth,isAdmin(),async(req,res)=>{
             }
           }
         },
-       
+      
       }),
        prisma.post.count(),
        prisma.comment.count(),
@@ -489,6 +497,34 @@ router.get("/postadmin",isAuth,isAdmin(),async(req,res)=>{
   } catch (error) {
     console.error("PostAdmin Error:", error);
     return res.status(500).json({error:error.message})
+  }
+})
+router.get("/report/:id",isAuth,isAdmin(),async(req,res)=>{
+  try {
+    const {id}=req.params;
+    const data=await prisma.post.findUnique({
+      where:{id:Number(id)},
+      include:{
+          reports:{
+            include:{
+              user:{
+                select:{
+  username:true,
+                image:true,
+                name:true
+                },
+              
+              },
+             
+            }
+          }
+      }
+      
+      
+    })
+    res.json(data)
+  } catch (error) {
+    res.status(500).json({error:error.message})
   }
 })
 module.exports={ContentRouter:router}

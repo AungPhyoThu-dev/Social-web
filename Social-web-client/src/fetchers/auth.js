@@ -645,6 +645,24 @@ Authorization:`Bearer ${token}`
     throw error;
   }
 }
+export async function ReportPost(postId){
+const token=getToken();
+try {
+  const res=await fetch(`${api}/content/report/${postId}`,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    },
+  })
+  const data=await res.json();
+  if(!res.ok){
+    throw new Error ("Faied to fatch resport")
+  }
+  return data;
+} catch (error) {
+  console.log(error);
+  return error;
+}
+}
 export async function Logout(){
   const token=getToken();
   try {
