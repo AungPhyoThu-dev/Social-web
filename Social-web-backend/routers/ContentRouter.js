@@ -470,7 +470,7 @@ router.get("/postadmin",isAuth,isAdmin(),async(req,res)=>{
         select:{
           userId:true,
           postId:true,
-          reason:true
+         
         }
        },
           _count:{

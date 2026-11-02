@@ -493,6 +493,9 @@ export default function Postadmin() {
                 sx={{
                   bgcolor: mode === "dark" ? "#252A36" : "white",
                   width: "100%",
+                     "& .MuiDataGrid-cell:focus": {
+      outline: "none",
+    },
                 }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
@@ -506,7 +509,7 @@ export default function Postadmin() {
                 localeText={{
                   noRowsLabel: postAdminSearch
                     ? "No post found"
-                    : formControlPost === "banuser" && "No report post here",
+                    : formControlPost === "banusers" && "No report post here",
                 }}
               />
             </Box>

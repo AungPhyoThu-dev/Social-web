@@ -175,8 +175,20 @@ return()=>{
   }
   
   return (
-    <Box>
-      {isLoading || showSkeleton ? (
+    <>
+    <Box sx={{display:"grid",gridTemplateColumns:{
+      xs:"1fr",
+      sm:"minmax(0, 1fr) 300px",
+       lg: "minmax(0, 1000px) 150px",
+    
+    },
+     width: "100%",
+       maxWidth: 920,
+    mx: "auto",
+       gap: 3,
+      alignItems:"start"}}>
+      <Box>
+          {isLoading || showSkeleton ? (
         <>
           <PostSkeleton />
           <PostSkeleton />
@@ -541,6 +553,30 @@ return()=>{
             );
           })
       )}
+      </Box>
+    
+ <Box
+   sx={{
+    position: "sticky",
+    top: 80,
+    bgcolor:"red",
+    display: {
+      xs: "none",
+      sm: "block",
+    },
+    width: {
+      sm: 240,
+      md: 260,
+      lg: 500,
+    },
+    height:300,
+    minWidth: 0,
+  }}
+>
+  <Typography sx={{ color: "white", p: 2 }}>
+    HELLO FRIEND
+  </Typography>
+</Box>
 
       <Backdrop
         open={showSaveCard !== null || showLike !== null}
@@ -861,5 +897,7 @@ return()=>{
         
       </Backdrop>
     </Box>
+   
+</>
   );
 }

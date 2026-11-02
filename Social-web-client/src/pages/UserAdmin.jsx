@@ -83,7 +83,7 @@ export default function Useradmin() {
         fontSize: { xs: 12, sm: 14 },mt:2,color:params.row.role==="admin" &&"#6B8FC4"}}>
           {params.value}
       </Typography>
-      <FormControl size="small" sx={{width:isMobile?80:30,mt:{sm:1,xs:1.4}}}>
+      <FormControl size="small" sx={{width:isMobile?80:30,mt:{sm:1,xs:1.4},}}>
         <Select displayEmpty renderValue={() => ""} value={params.row.role} onChange={(e)=>{
           const role=e.target.value;
 AdminSelectRoleMuation.mutate({id:params.id,role:role})
@@ -251,6 +251,11 @@ AdminSelectRoleMuation.mutate({id:params.id,role:role})
           <DataGrid
             rows={rows}
             columns={columns}
+            sx={{
+                 "& .MuiDataGrid-cell:focus": {
+      outline: "none",
+    },
+            }}
             autoHeight
             columnVisibilityModel={{
               id:!isMobile,

@@ -1,5 +1,5 @@
 import { useApp } from "./ThemeApp";
-import {Box,Container,Snackbar} from   "@mui/material";
+import {Box,Container,Snackbar,Typography} from   "@mui/material";
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
 import AppDrawer from "./components/AppDrawer";
@@ -9,7 +9,8 @@ export default function Template(){
     <Box>
       <Header/>
       <AppDrawer/>
-      <Container maxWidth="md" sx={{ mt: 4,}}>
+      <Container maxWidth="lg" sx={{ mt: 4,}}>
+       
         <Outlet/>
       </Container>
       <Snackbar anchorOrigin={{
