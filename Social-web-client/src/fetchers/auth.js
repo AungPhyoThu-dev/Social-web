@@ -655,13 +655,32 @@ try {
   })
   const data=await res.json();
   if(!res.ok){
-    throw new Error ("Faied to fatch resport")
+    throw new Error ("Faied to fatch report")
   }
   return data;
 } catch (error) {
   console.log(error);
   return error;
 }
+}
+export async function DeletePostAdmin(postId){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/content/postAdmin/posts/${postId}`,{
+      method:"DELETE",
+      headers:{
+        Authorization:`Bearer ${token}`
+      },
+    })
+    const data=await res.json();
+    if(!res.ok){
+      throw  new Error(data.error || "Failed to delete post")
+    }
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 export async function Logout(){
   const token=getToken();

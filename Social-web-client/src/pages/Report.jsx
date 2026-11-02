@@ -112,7 +112,7 @@ export default function Report(){
             </Box>
 
 <Box sx={{mt:3}}>
-    <DataGrid rows={rows} columns={columns} rowHeight={90}/>
+    <DataGrid rows={rows} columns={columns} rowHeight={90} />
 </Box>
            </Container>
         </Box>

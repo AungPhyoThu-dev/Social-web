@@ -23,12 +23,19 @@ import {
 import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import { PostAdmin } from "../fetchers/auth";
+import { PostAdmin, DeletePostAdmin } from "../fetchers/auth";
 import { queryClient, useApp } from "../ThemeApp";
 import { useMutation, useQuery } from "@tanstack/react-query";
 export default function Postadmin() {
-  const navigate=useNavigate();
-  const { mode } = useApp();
+  const navigate = useNavigate();
+  const {
+    mode,
+    postAdminSearch,
+    setPostAdminSearch,
+    formControlPost,
+    setFormControlPost,
+    setGlobalMsg,
+  } = useApp();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "lg"));
@@ -37,6 +44,21 @@ export default function Postadmin() {
     queryFn: async () => PostAdmin(),
   });
   console.log(data);
+   const deletPostMutation = useMutation({
+    mutationKey: ["post"],
+    mutationFn: async (postId) => {
+      return DeletePostAdmin(postId);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["postadmin"],
+      });
+      setGlobalMsg("Post is deleted");
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   if (isLoading) {
     return (
       <Box
@@ -58,83 +80,164 @@ export default function Postadmin() {
       </Box>
     );
   }
-  const rows = data?.posts?.map((post) => ({
+  const formControlFilter = data?.posts?.filter((post) => {
+    const search = postAdminSearch.toLowerCase();
+    const matchSearch = post.user.username?.toLowerCase().includes(search);
+    if (formControlPost === "users") {
+      return matchSearch;
+    }
+    if (formControlPost === "banusers") {
+      return post?.reports.length > 0 && matchSearch;
+    }
+    return matchSearch;
+  });
+  const rows = formControlFilter.map((post) => ({
     id: post.id,
     content: post.content,
     images: post.images,
-    user:post.user,
-    comment:post._count.comments,
-    like:post._count.postLikes,
-    post:post
-
+    user: post.user,
+    comment: post._count.comments,
+    like: post._count.postLikes,
+    post: post,
   }));
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     {
       field: "posts",
       headerName: "Posts",
-  
+
       flex: 1,
       renderCell: (params) => {
         return (
-          <Box sx={{ display: "flex",alignItems:"center" ,gap:1}}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Box
               sx={{
                 width: { sm: 50, xs: 40 },
                 mt: 1.5,
                 height: { sm: 50, xs: 40 },
-                            objectFit: "cover",
-            borderRadius: 2,
-            flexShrink: 0,
-
+                objectFit: "cover",
+                borderRadius: 2,
+                flexShrink: 0,
               }}
               component="img"
               src={params.row.images?.[0]?.url}
             ></Box>
-{!isMobile&&(  <Typography sx={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:2,overflow:"hidden",whiteSpace:"normal",textOverflow:"ellipsis",fontSize:{sm:12,}}}>{params.row.content}</Typography>)}
-          
+            {!isMobile && (
+              <Typography
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                  whiteSpace: "normal",
+                  textOverflow: "ellipsis",
+                  fontSize: { sm: 12 },
+                }}
+              >
+                {params.row.content}
+              </Typography>
+            )}
           </Box>
         );
       },
     },
-    {field:"user",headerName:"User" ,flex:!isMobile && 1,renderCell:(params)=>(<Box>
-      <Typography sx={{mt:{sm:3,xs:3},fontSize:{sm:13,xs:11}}}>{params.row?.user?.username}</Typography>
-    </Box>) },
-    {field:"comment",headerName:"Comments",flex:1,renderCell:(params)=>(
-      <Box>
-        <Typography sx={{mt:3,ml:5}}>{params.row?.comment}</Typography>
-      </Box>
-    )},
-    {field:"like",headerName:"PostLikes",flex:1,renderCell:(params)=>(
-      <Box>
-        <Typography sx={{mt:3,ml:5}}>{params.row?.like}</Typography>
-      </Box>
-    )},
-    {field:"action",headerName:"Actions",flex:!isMobile && 1, renderCell:(params)=>(
-      <Box sx={{display:"flex",gap:{sm:3,xs:1},mt:{sm:3,xs:3},cursor:"pointer",ml:{xs:2,sm:4}}}>
-        <ViewDetailIcon onClick={(e)=>{
-          e.stopPropagation();
-          navigate(`/postDetail/${params.row.id}`)
-        }} sx={{fontSize:{sm:20,xs:18},   color: "#64B5F6",
-          "&:hover": {
-            color: "#1976D2",
-          },}}/>
-          {params.row.post.reports?.length>0?(  <ReportIcon onClick={(e)=>{e.stopPropagation();
-            navigate(`/admin/report/${params.row.id}`)
-          }}  sx={{fontSize:{sm:20,xs:18},  color: "red",
-         }}/>):(  <ReportIcon onClick={(e)=>{e.stopPropagation();
-            navigate(`/admin/report/${params.row.id}`)
-          }}  sx={{fontSize:{sm:20,xs:18},  color: "green",
-         }}/>)}
-        
-        <DeleteIcon sx={{fontSize:{sm:20,xs:18},  color: "#E57373",
-          "&:hover": {
-            color: "#D32F2F",
-          },}}/>
-      </Box>
-    )  }
-  ];
+    {
+      field: "user",
+      headerName: "User",
+      flex: !isMobile && 1,
+      renderCell: (params) => (
+        <Box>
+          <Typography
+            sx={{ mt: { sm: 3, xs: 3 }, fontSize: { sm: 13, xs: 11 } }}
+          >
+            {params.row?.user?.username}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: "comment",
+      headerName: "Comments",
+      flex: 1,
+      renderCell: (params) => (
+        <Box>
+          <Typography sx={{ mt: 3, ml: 5 }}>{params.row?.comment}</Typography>
+        </Box>
+      ),
+    },
+    {
+      field: "like",
+      headerName: "PostLikes",
+      flex: 1,
+      renderCell: (params) => (
+        <Box>
+          <Typography sx={{ mt: 3, ml: 5 }}>{params.row?.like}</Typography>
+        </Box>
+      ),
+    },
+    {
+      field: "action",
+      headerName: "Actions",
+      flex: !isMobile && 1,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            gap: { sm: 3, xs: 1 },
+            mt: { sm: 3, xs: 3 },
+            cursor: "pointer",
+            ml: { xs: 2, sm: 4 },
+          }}
+        >
+          <ViewDetailIcon
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/postDetail/${params.row.id}`);
+            }}
+            sx={{
+              fontSize: { sm: 20, xs: 18 },
+              color: "#64B5F6",
+              "&:hover": {
+                color: "#1976D2",
+              },
+            }}
+          />
+          {params.row.post.reports?.length > 0 ? (
+            <ReportIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/admin/report/${params.row.id}`);
+              }}
+              sx={{ fontSize: { sm: 20, xs: 18 }, color: "red" }}
+            />
+          ) : (
+            <ReportIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/admin/report/${params.row.id}`);
+              }}
+              sx={{ fontSize: { sm: 20, xs: 18 }, color: "green" }}
+            />
+          )}
 
+          <DeleteIcon
+            onClick={(e) => {
+              e.stopPropagation();
+              deletPostMutation.mutate(params.row.id);
+            }}
+            sx={{
+              fontSize: { sm: 20, xs: 18 },
+              color: "#E57373",
+              "&:hover": {
+                color: "#D32F2F",
+              },
+            }}
+          />
+        </Box>
+      ),
+    },
+  ];
+ 
   return (
     <Box>
       <Container maxWidth="lg">
@@ -333,9 +436,11 @@ export default function Postadmin() {
               <Box sx={{ display: "flex", gap: isMobile || isTablet ? 1 : 5 }}>
                 <TextField
                   size="small"
+                  value={postAdminSearch}
+                  onChange={(e) => setPostAdminSearch(e.target.value)}
                   placeholder="Search posts by username"
                   sx={{
-                    width: { xs: 200, sm: 900 },
+                    width: { xs: 170, sm: 900 },
                     "& .MuiInputBase-root": {
                       height: { sm: 40, xs: 30 },
                       mt: { xs: 3 },
@@ -352,33 +457,43 @@ export default function Postadmin() {
                   }}
                 />
                 <FormControl
-                  sx={{ minWidth: { xs: 70, sm: 160 }, mt: { xs: 3 } }}
+                  sx={{ minWidth: { xs: 110, sm: 160 }, mt: { xs: 3 } }}
                 >
                   <Select
-                    defaultValue="All Users"
+                    value={formControlPost}
+                    onChange={(e) => setFormControlPost(e.target.value)}
                     sx={{ height: { xs: 30, sm: 40 } }}
                   >
-                    <MenuItem value="users">All Users</MenuItem>
-                    <MenuItem value="banusers">Banned</MenuItem>
+                    <MenuItem
+                      value="users"
+                      sx={{ fontSize: { xs: 12, sm: 14 } }}
+                    >
+                      Users
+                    </MenuItem>
+                    <MenuItem
+                      value="banusers"
+                      sx={{ fontSize: { xs: 12, sm: 14 } }}
+                    >
+                      Banned
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </Box>
             </Box>
             <Box sx={{ mt: 3 }}>
               <DataGrid
-           
                 rows={rows}
                 rowHeight={70}
                 columns={columns}
-                columnVisibilityModel={
-                  {
-                    id:!isMobile,
-                    comment:!isMobile,
-                    like:!isMobile,
-
-                  }
-                }
-                sx={{ bgcolor: mode === "dark" ? "#252A36" : "white",   width:"100%", }}
+                columnVisibilityModel={{
+                  id: !isMobile,
+                  comment: !isMobile,
+                  like: !isMobile,
+                }}
+                sx={{
+                  bgcolor: mode === "dark" ? "#252A36" : "white",
+                  width: "100%",
+                }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
@@ -387,6 +502,11 @@ export default function Postadmin() {
                       pageSize: 10,
                     },
                   },
+                }}
+                localeText={{
+                  noRowsLabel: postAdminSearch
+                    ? "No post found"
+                    : formControlPost === "banuser" && "No report post here",
                 }}
               />
             </Box>

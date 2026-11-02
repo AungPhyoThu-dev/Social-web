@@ -82,6 +82,7 @@ function isAdmin(){
   }
   next()
   }
+  
 
 }
 module.exports={isAuth,isOwner,isAdmin}

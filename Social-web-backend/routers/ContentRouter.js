@@ -527,4 +527,39 @@ router.get("/report/:id",isAuth,isAdmin(),async(req,res)=>{
     res.status(500).json({error:error.message})
   }
 })
+router.delete("/postAdmin/posts/:id",isAuth,isAdmin(),async(req,res)=>{
+  const {id}=req.params;
+  try {
+    await prisma.commentLike.deleteMany({
+      where:{
+        comment:{
+          postId:Number(id)
+        }
+      }
+    })
+    await prisma.comment.deleteMany({
+      where:{
+        postId:Number(id)
+      }
+    })
+   
+    await prisma.report.deleteMany({
+      where:{postId:Number(id)}
+    })
+    await prisma.savePost.deleteMany({
+      where:{postId:Number(id)}
+    })
+    await prisma.postLike.deleteMany({
+      where:{postId:Number(id)}
+    })
+     await prisma.post.delete({
+      where:{id:Number(id)}
+    })
+    return res.json({
+  message: "Post deleted successfully"
+});
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+})
 module.exports={ContentRouter:router}
