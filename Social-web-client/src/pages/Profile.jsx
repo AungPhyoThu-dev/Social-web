@@ -19,7 +19,8 @@ import {
   Paper,
   Tabs,
   Tab,
-  Grid
+  Grid,
+  Container 
 } from "@mui/material";
 import {
   ThumbUp as LikeIcon,
@@ -197,7 +198,8 @@ await queryClient.invalidateQueries({
   };
   return (
     <Box>
-      <Paper
+      <Container maxWidth="md">
+         <Paper
         elevation={0}
        sx={{
     height: { xs: 150, sm: 220 },
@@ -997,6 +999,8 @@ fontWeight:"bold"
         
         </Box>))}
       </Card>
+      </Container>
+     
       
             <Backdrop
               open={showSaveCard !== null || showLike !== null}

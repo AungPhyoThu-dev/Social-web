@@ -164,7 +164,7 @@ const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Friende
   queryKey:["friends"],
   queryFn:async()=>Friends()
 })
-console.log(FriendData);
+
 const isLoading=PostLoading||FriendLoading;
 const isError=PostError||FriendError;
 const error=Posterror||Frienderror;
@@ -570,7 +570,7 @@ const error=Posterror||Frienderror;
     position: "sticky",
     top: 80,
   
-    bgcolor:mode==="dark"?"gray":"white",
+    bgcolor: "background.paper",
     display: {
       xs: "none",
       sm: "block",
@@ -583,11 +583,13 @@ const error=Posterror||Frienderror;
     height:"auto",
     minWidth: 0,
     borderRadius:5,
-    border:"1px solid gray ",
-        boxShadow:
-      mode === "dark"
-        ? "0 4px 16px rgba(0, 0, 0, 0.35)"
-        : "0 4px 16px rgba(0, 0, 0, 0.10)",
+   border: mode === "dark"
+  ? "1px solid #334155"
+  : "1px solid #E2E8F0",
+
+boxShadow: mode === "dark"
+  ? "0 4px 15px rgba(0,0,0,0.20)"
+  : "0 4px 15px rgba(15,23,42,0.06)",
   }}
 >
   <Box sx={{display:"flex",justifyContent:"space-between" ,width:"100%",alignItems:"center",  color:mode==="dark"?"white":"black",}}>
@@ -596,7 +598,7 @@ const error=Posterror||Frienderror;
   </Typography>
      <Box onClick={(e)=>{
           e.stopPropagation();
-          navigate(-1)
+          navigate("./friend")
         }}   sx={{
     display: "flex",
     alignItems: "center",
@@ -613,6 +615,7 @@ const error=Posterror||Frienderror;
   
         </Box>
   </Box>
+  <Divider sx={{ mt: 1, mx: 2 }} />
 {FriendData?.slice(0,6).map((friend)=>{
   return(
     <>
@@ -627,11 +630,11 @@ const error=Posterror||Frienderror;
       </Box>
  
  <Box sx={{mr:2}}>
-  {friend.following.length?(<Button variant="outlined">following</Button>):(<Button variant="outlined" sx={{bgcolor:"blue",textTransform:"none",  borderRadius: 5,
+  {friend.following.length?(<Button variant="outlined">following</Button>):(<Button variant="outlined" sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
         textTransform: "none",
         fontWeight: "bold",
         color: "white",
-        borderColor: mode === "dark" ? "#4aa6f1" : "#1976D2",}}>follow</Button>)}
+        borderColor: mode === "dark" ?"#1185bb" : "#1976D2",}}>follow</Button>)}
  </Box>
     </Box>
      <Divider sx={{ mt: 2, mx: 2 }} />
