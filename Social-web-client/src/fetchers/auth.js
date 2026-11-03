@@ -701,3 +701,23 @@ export async function Logout(){
     throw error
   }
 }
+
+export async function Friends() {
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/friends`,{
+      headers:{
+        Authorization:`Bearer ${token}`,
+      
+      }
+    })
+    const data=await res.json()
+    if(!res.ok){
+      throw new Error ("Fatch failed friends")
+    }
+    return data
+  } catch (error) {
+    console.log(error);
+    throw error
+  }
+}

@@ -28,7 +28,8 @@ import {
   TurnedIn as SaveIcon,
   RemoveCircle as NotInterestIcon,
   Link as CopylinkIcon,
-  ThumbDown as UnlikeButton,
+  ThumbDown as UnlikeButton, 
+  ArrowForward as SeeAllIcon
 } from "@mui/icons-material";
 import { queryClient, useApp } from "../ThemeApp";
 import { fetchPosts, savePost } from "../fetchers/auth";
@@ -36,9 +37,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatRelative } from "date-fns";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { postLike, RemoveLike } from "../fetchers/auth";
+import { postLike, RemoveLike,Friends } from "../fetchers/auth";
 import { UnsavePost } from "../fetchers/auth";
 import { PostSkeleton } from "../../Skeletons/PostSkeleton";
+import { fr } from "date-fns/locale";
 export default function Home() {
   const navigate = useNavigate();
   const {
@@ -139,6 +141,7 @@ return()=>{
     },
     onError: (error) => {
       console.log(error.message);
+
     },
   });
   const unsaveMutation = useMutation({
@@ -153,11 +156,18 @@ return()=>{
     },
   });
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data:PostData, isLoading:PostLoading, isError:PostError, error:Posterror } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => fetchPosts(),
   });
-
+const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Frienderror}=useQuery({
+  queryKey:["friends"],
+  queryFn:async()=>Friends()
+})
+console.log(FriendData);
+const isLoading=PostLoading||FriendLoading;
+const isError=PostError||FriendError;
+const error=Posterror||Frienderror;
   useEffect(() => {
     if (!isLoading) {
       const timer = setTimeout(() => {
@@ -195,7 +205,7 @@ return()=>{
           <PostSkeleton />
         </>
       ) : (
-        data
+        PostData
           .filter((post) => !hidden.includes(post.id))
           .map((post) => {
              const Maxlength=100;
@@ -559,7 +569,8 @@ return()=>{
    sx={{
     position: "sticky",
     top: 80,
-    bgcolor:"red",
+  
+    bgcolor:mode==="dark"?"gray":"white",
     display: {
       xs: "none",
       sm: "block",
@@ -567,15 +578,69 @@ return()=>{
     width: {
       sm: 240,
       md: 260,
-      lg: 500,
+      lg: 400,
     },
-    height:300,
+    height:"auto",
     minWidth: 0,
+    borderRadius:5,
+    border:"1px solid gray ",
+        boxShadow:
+      mode === "dark"
+        ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+        : "0 4px 16px rgba(0, 0, 0, 0.10)",
   }}
 >
-  <Typography sx={{ color: "white", p: 2 }}>
-    HELLO FRIEND
+  <Box sx={{display:"flex",justifyContent:"space-between" ,width:"100%",alignItems:"center",  color:mode==="dark"?"white":"black",}}>
+      <Typography sx={{ p: 2,fontSize:{sm:22},fontWeight:"bold" }}>
+    Friends
   </Typography>
+     <Box onClick={(e)=>{
+          e.stopPropagation();
+          navigate(-1)
+        }}   sx={{
+    display: "flex",
+    alignItems: "center",
+    gap: 0.5,
+    cursor: "pointer",
+    color: mode === "dark" ? "#2934c2" : "#12589e",
+    p: 1,
+    flexShrink: 0,
+    ml: "auto",
+    
+  }}>
+            <Typography>See all</Typography>
+  <SeeAllIcon sx={{  color: "text.primary",}}/>
+  
+        </Box>
+  </Box>
+{FriendData?.slice(0,6).map((friend)=>{
+  return(
+    <>
+     <Box sx={{display:"flex",mt:3,justifyContent:"space-between"}}>
+      <Box sx={{display:"flex",gap:2,ml:2}}>
+             {friend?.image?(<Avatar  sx={{
+    width: 50,
+    height: 50,
+    
+  }} src={friend.image}/>):(<Avatar><ProfileIcon/></Avatar>)}
+  <Typography sx={{mt:1}}>{friend.username}</Typography>
+      </Box>
+ 
+ <Box sx={{mr:2}}>
+  {friend.following.length?(<Button variant="outlined">following</Button>):(<Button variant="outlined" sx={{bgcolor:"blue",textTransform:"none",  borderRadius: 5,
+        textTransform: "none",
+        fontWeight: "bold",
+        color: "white",
+        borderColor: mode === "dark" ? "#4aa6f1" : "#1976D2",}}>follow</Button>)}
+ </Box>
+    </Box>
+     <Divider sx={{ mt: 2, mx: 2 }} />
+    </>
+   
+
+    
+  )
+})}
 </Box>
 
       <Backdrop

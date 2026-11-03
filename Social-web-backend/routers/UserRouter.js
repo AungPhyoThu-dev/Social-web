@@ -455,5 +455,32 @@ router.post("/logout",isAuth,async(req,res)=>{
   } catch (error) {
     res.status(500).json({error:error.message})
   }
+});
+router.get("/friends",isAuth,async(req,res)=>{
+  const user=res.locals.user;
+  try {
+    const data=await prisma.user.findMany({
+      
+        select:{
+          image:true,
+          username:true,
+         following:{
+          where:{
+            followerId:user.id
+          },
+          select:{
+            id:true,
+          }
+         }
+        },
+        
+      }
+    )
+   
+    return res.status(200).json(data)
+  } catch (error) {
+     console.log("Friends Error:", error);
+    res.status(500).json({error:error.message})
+  }
 })
 module.exports={UserRouter:router}
