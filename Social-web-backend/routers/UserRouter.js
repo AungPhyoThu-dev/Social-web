@@ -459,7 +459,9 @@ router.post("/logout",isAuth,async(req,res)=>{
 router.get("/friends",isAuth,async(req,res)=>{
   const user=res.locals.user;
   try {
-    const data=await prisma.user.findMany({
+    const [data,totalFriends,totalFollowings,totalfollowers]=
+    await Promise.all([
+        prisma.user.findMany({
       
         select:{
           image:true,
@@ -468,16 +470,48 @@ router.get("/friends",isAuth,async(req,res)=>{
           where:{
             followerId:user.id
           },
+        
           select:{
             id:true,
           }
-         }
+         },
+           followers:{
+where:{
+  followingId:user.id
+},
+   select:{
+            id:true
+          }
+          },
+       
         },
         
       }
-    )
+    ),
+    prisma.user.count({
+      where:{id:{
+        not:user.id
+      }}
+    }),
+    prisma.follow.count({
+      where:{
+        followerId:user.id
+      }
+    }),
+    prisma.follow.count({
+      where:{
+        followingId:user.id
+      }
+    }),
+    ])
    
-    return res.status(200).json(data)
+   
+    return res.status(200).json({
+      data,
+      totalFriends,
+      totalFollowings,
+      totalfollowers
+    })
   } catch (error) {
      console.log("Friends Error:", error);
     res.status(500).json({error:error.message})

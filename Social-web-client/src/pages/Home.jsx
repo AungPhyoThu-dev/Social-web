@@ -164,7 +164,7 @@ const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Friende
   queryKey:["friends"],
   queryFn:async()=>Friends()
 })
-
+  
 const isLoading=PostLoading||FriendLoading;
 const isError=PostError||FriendError;
 const error=Posterror||Frienderror;
@@ -616,7 +616,7 @@ boxShadow: mode === "dark"
         </Box>
   </Box>
   <Divider sx={{ mt: 1, mx: 2 }} />
-{FriendData?.slice(0,6).map((friend)=>{
+{FriendData?.data?.slice(0,6).map((friend)=>{
   return(
     <>
      <Box sx={{display:"flex",mt:3,justifyContent:"space-between"}}>
