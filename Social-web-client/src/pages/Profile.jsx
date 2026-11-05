@@ -198,7 +198,7 @@ await queryClient.invalidateQueries({
   };
   return (
     <Box>
-      <Container maxWidth="md">
+      <Container maxWidth="md" disableGutters>
          <Paper
         elevation={0}
        sx={{

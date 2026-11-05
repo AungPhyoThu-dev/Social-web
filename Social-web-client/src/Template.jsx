@@ -9,7 +9,7 @@ export default function Template(){
     <Box>
       <Header/>
       <AppDrawer/>
-      <Container maxWidth="lg" sx={{ mt: 4,}}>
+      <Container maxWidth="lg" sx={{ mt: 4,}} disableGutters>
        
         <Outlet/>
       </Container>

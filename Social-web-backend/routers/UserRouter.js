@@ -464,6 +464,7 @@ router.get("/friends",isAuth,async(req,res)=>{
         prisma.user.findMany({
       
         select:{
+            id: true,
           image:true,
           username:true,
          following:{
