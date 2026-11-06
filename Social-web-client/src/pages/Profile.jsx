@@ -38,7 +38,8 @@ import {
      Apps as OwnPageIcon,
      LockPerson as LockIcon,
      Delete as DeleteIcon,
-     SentimentDissatisfied as SadIcon
+     SentimentDissatisfied as SadIcon,
+     ArrowBack as BackArrowIcon
 } from "@mui/icons-material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -198,7 +199,33 @@ await queryClient.invalidateQueries({
   };
   return (
     <Box>
+
       <Container maxWidth="md" disableGutters>
+           <Box onClick={(e)=>{
+                e.stopPropagation();
+                navigate(-1)
+              }}   sx={{
+                  maxWidth: "100%",
+                  mx: "auto",
+                  mb: 2,
+                  height: "auto",
+                  width: {
+                    sm: 900,
+                    xs: "100%",
+                  },
+                  display:"flex",
+                    alignItems: "center",
+            gap: 0.8,
+            cursor: "pointer",
+            color: "text.secondary",
+           
+            p: 1,
+          
+           
+                }}>
+        <BackArrowIcon sx={{  color: "text.primary",}}/>
+        <Typography>Back</Typography>
+              </Box>
          <Paper
         elevation={0}
        sx={{

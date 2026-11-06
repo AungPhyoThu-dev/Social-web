@@ -16,6 +16,8 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Friends } from "../fetchers/auth";
 import { useApp, queryClient } from "../ThemeApp";
+import { useNavigate } from "react-router-dom";
+import{Following} from "../fetchers/auth";
 import {
   AccountCircle as ProfileIcon,
   ArrowBack as BackIcon,
@@ -24,10 +26,30 @@ import {
   PersonAdd as FollowerIcon,
   Search as SearchIcon,
 } from "@mui/icons-material";
+import { fr } from "date-fns/locale";
 export default function Home() {
+  const navigate=useNavigate();
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { mode, storeFriendPage, setStoreFriendPage } = useApp();
+  const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg} = useApp();
+const followingMutation=useMutation({
+  mutationKey:["following"],
+  mutationFn:async(id)=>{
+    return Following(id)
+  },
+  onSuccess:async()=>{
+    await queryClient.invalidateQueries({
+      queryKey:["friends"]
+    }),
+  setGlobalMsg("Following successfully!")
+  },
+  onError:(error)=>{
+    console.log(error)
+  }
+})
+
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["friends"],
     queryFn: async () => Friends(),
@@ -67,7 +89,10 @@ export default function Home() {
                 gap: { sm: 2, xs: 2 },
               }}
             >
-              <Box
+              <Box onClick={(e)=>{
+                e.stopPropagation();
+                navigate("/")
+              }}
                 sx={{
                   borderRadius: 50,
                   border: "1px solid transparent",
@@ -128,7 +153,9 @@ export default function Home() {
                     gap: {sm:2,xs:1},
                     cursor: "pointer",
                     mx:"1",
-                    mb:{sm:6,xs:2}
+                    mb:{sm:6,xs:4},
+                    WebkitTapHighlightColor: "transparent",
+userSelect: "none"
                   }}
                 >
                   <Box
@@ -153,6 +180,7 @@ export default function Home() {
                       justifyContent: "center",
                       borderRadius: 30,
                       gap: 1,
+                      color:"white"
                     }}
                   >
                     <>
@@ -179,11 +207,10 @@ export default function Home() {
                       bgcolor:
                         storeFriendPage === 2
                           ? "#2196F3"
-                          : mode === "dark"
-                            ? "gray"
-                            : "black",
+                          : mode==="dark"?"gray":"black",
                       px: { xs: 0.5, sm: 2 },
                       py: { xs: 1.5, sm: 2 },
+                      color:"white",
                       display: "flex",
                       textAlign: "center",
                       justifyContent: "center",
@@ -225,6 +252,7 @@ export default function Home() {
                       justifyContent: "center",
                       borderRadius: 30,
                       gap: 1,
+                      color:"white"
                     }}
                   >
                     <></>
@@ -259,13 +287,16 @@ export default function Home() {
           minHeight: 130,
           boxShadow: 2,bgcolor:"transparent"}}>
 <Box sx={{display:"flex"}}>
-  {friend.image?(<Box sx={{mt:{sm:2},ml:4}}>
-    <Avatar sx={{width:{sm:70},height:{sm:70}}} src={friend.image}/>
+  {friend.image?(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}>
+    <Avatar sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1},}} src={friend.image}/>
   </Box>):(<Box><Avatar ><ProfileIcon sx={{fontSize:{sm:30}}}/></Avatar></Box>)}
-  <Box sx={{mt:{sm:2},ml:{sm:3},display:"flex",flexDirection:"column"}}>
+  <Box sx={{mt:{sm:2,xs:1},ml:{sm:3,xs:2},display:"flex",flexDirection:"column"}}>
     <Typography sx={{mb:1,fontWeight:"bold"}}>{friend.username}</Typography>
-    <Box sx={{gap:{sm:1},display:'flex'}}>
-       <Button variant="contained"  sx={{
+    <Box sx={{gap:{sm:1,xs:1},display:'flex'}}>
+      {friend.following.some((followingUser)=>
+    
+        followingUser.followingId===Number(auth.id)
+      )?(     <Button variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
     bgcolor: "#2196F3",
     "&:hover": {
@@ -273,8 +304,23 @@ export default function Home() {
     },
     textTransform: "none",
     borderRadius: 2,
-  }}>Follow</Button>
-       <Button variant="contained"  sx={{
+  }}>Following</Button>):(     <Button onClick={(e)=>{
+    e.stopPropagation();
+    followingMutation.mutate(friend.id)
+  }} variant="contained"  sx={{
+    fontSize: { xs: 11, sm: 14 },
+    bgcolor: "#2196F3",
+    "&:hover": {
+      bgcolor: "#1976D2",
+    },
+    textTransform: "none",
+    borderRadius: 2,
+  }}>Follow</Button>)}
+      
+       <Button onClick={(e)=>{
+        e.stopPropagation();
+       navigate(`/profile/${friend.id}`)
+       }} variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
     bgcolor: "#2196F3",
     "&:hover": {

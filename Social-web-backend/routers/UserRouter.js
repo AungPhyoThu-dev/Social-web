@@ -467,23 +467,20 @@ router.get("/friends",isAuth,async(req,res)=>{
             id: true,
           image:true,
           username:true,
-         following:{
-          where:{
-            followerId:user.id
-          },
-        
-          select:{
-            id:true,
-          }
-         },
-           followers:{
-where:{
-  followingId:user.id
+        following: {
+  select: {
+    id: true,
+    followerId: true,
+    followingId: true
+  }
 },
-   select:{
-            id:true
-          }
-          },
+followers: {
+  select: {
+    id: true,
+    followerId: true,
+    followingId: true
+  }
+},
        
         },
         
@@ -506,7 +503,8 @@ where:{
     }),
     ])
    
-   
+
+
     return res.status(200).json({
       data,
       totalFriends,
@@ -515,6 +513,44 @@ where:{
     })
   } catch (error) {
      console.log("Friends Error:", error);
+    res.status(500).json({error:error.message})
+  }
+})
+router.post("/following/:id",isAuth,async(req,res)=>{
+  const user=res.locals.user;
+  const followingId=Number(req.params.id);
+  console.log("Following ID:", followingId);
+  try {
+    const TargetUser=await prisma.user.findUnique({
+      where:{
+        id:followingId
+      }
+    });
+    console.log("TargetUser:", TargetUser);
+    if(!TargetUser){
+      return res.status(400).json({msg:"TargetUser not found"})
+    };
+    const existingFollowUser=await prisma.follow.findFirst({
+    where:{
+      followerId:user.id,
+      followingId:followingId
+    }
+    });
+    if(existingFollowUser){
+    return res.status(400).json({msg: "You are already following this user"})
+    }
+const data=await prisma.follow.create({
+  data:{
+  followerId:user.id,
+  followingId:followingId,
+  
+  }
+
+})
+console.log("Created Follow:", data);
+return res.status(200).json({data})
+  } catch (error) {
+     console.error("FOLLOW ERROR:", error);
     res.status(500).json({error:error.message})
   }
 })

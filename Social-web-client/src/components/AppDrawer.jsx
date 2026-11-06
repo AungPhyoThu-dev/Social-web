@@ -189,7 +189,7 @@ export default function AppDrawer() {
                 <ListItemButton
                   disableRipple
                   onClick={() => {
-                    navigate("/friends");
+                    navigate("/friend");
                   }}
                 >
                   <ListItemIcon>

@@ -1,4 +1,5 @@
 import { Token } from "@mui/icons-material";
+import { tr } from "date-fns/locale";
 
 const api=import.meta.env.VITE_API;
 
@@ -717,6 +718,28 @@ export async function Friends() {
     }
     return data
   } catch (error) {
+    console.log(error);
+    throw error
+  }
+}
+
+export async function Following(id){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/following/${id}`,{
+      method:"POST",
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+    const data= await res.json();
+    if(!res.ok){
+       console.log("BACKEND ERROR:", data);
+      throw new Error (data.message || "Failed following")
+    };
+    return data;
+  } catch (error) {
+     
     console.log(error);
     throw error
   }
