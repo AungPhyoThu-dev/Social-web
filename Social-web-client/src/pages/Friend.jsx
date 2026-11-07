@@ -58,7 +58,7 @@ const followingMutation=useMutation({
   const friendsData=data?.data||[];
   const followingData=friendsData.filter((followingFriends)=>followingFriends.following.length>0);
   const followerData=friendsData.filter((followerFriends)=>followerFriends.followers.length>0);
-  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followingData:followerData;
+  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followerData:followerData;
 
   const filterFriendData=displayData.filter((friend)=>{
     
@@ -91,9 +91,9 @@ const followingMutation=useMutation({
   }
   console.log(data);
   return (
-    <Box>
+    <Box >
       <Container disableGutters maxWidth="md" >
-        <Card sx={{ width: "100%", minHeight: 600, userSelect: "none" }}>
+        <Card sx={{ width: "100%", minHeight: "auto", userSelect: "none" }}>
           <Box>
             <Box
               sx={{
@@ -238,11 +238,11 @@ userSelect: "none"
                       {!isMobile && <FollowingIcon />}
                       {!isMobile ? (
                         <Typography>
-                          Followings ({data?.totalFollowings})
+                          Followers ({data?.totalFollowings})
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: { xs: 12 } }}>
-                          Followings
+                          Followers
                         </Typography>
                       )}
                     </>
@@ -299,7 +299,7 @@ userSelect: "none"
       {storeFriendPage === 1
         ? "No friends found"
         : storeFriendPage === 2
-          ? "You are not following anyone yet"
+          ? "You don't have any followers yet"
           : "You don't have any followers yet"}
     </Typography>
     
@@ -313,25 +313,31 @@ userSelect: "none"
       sm: "repeat(2, minmax(0, 1fr))",
                     },gap:1,mx: { sm: 3, xs: 1 } }}>
                    
-    {displayData.map((friend) => {
+    {filterFriendData.map((friend) => {
   
               return (
                 
-                <Box key={friend.id}>
+                <Box sx={{ overflowY: "auto", scrollbarGutter: "stable" }} key={friend.id}>
                   
 <Card sx={{  p: 2,
           borderRadius: 3,
           minWidth: 0,
-          minHeight: 130,
-          boxShadow: 2,bgcolor:"transparent",mb:{sm:1}}}>
+          minHeight:130,
+          boxShadow: 2,bgcolor:"transparent",mb:{sm:3,xs:1}}}>
 <Box sx={{display:"flex"}}>
   {friend.image?(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}>
-    <Avatar sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1},}} src={friend.image}/>
-  </Box>):(<Box><Avatar ><ProfileIcon sx={{fontSize:{sm:30}}}/></Avatar></Box>)}
+    <Avatar sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1,sm:0},}} src={friend.image}/>
+  </Box>):(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}><Avatar  sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1,sm:0},}}><ProfileIcon sx={{fontSize:{sm:50,xs:30}}}/></Avatar></Box>)}
   <Box sx={{mt:{sm:2,xs:1},ml:{sm:3,xs:2},display:"flex",flexDirection:"column"}}>
     <Typography sx={{mb:1,fontWeight:"bold"}}>{friend.username}</Typography>
     <Box sx={{gap:{sm:1,xs:1},display:'flex'}}>
-      {friend.following.length>0?
+      { storeFriendPage===2 ||friend.followers.length>0  ?(     <Button variant="contained"  sx={{
+    fontSize: { xs: 9, sm: 14 },
+    bgcolor: "#7E57C2",
+  
+    textTransform: "none",
+    borderRadius: 2,
+  }}>Follow Back</Button>):(storeFriendPage===1||friend.following.length>0?
       (     <Button variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
     bgcolor: "green",
@@ -349,7 +355,8 @@ userSelect: "none"
     },
     textTransform: "none",
     borderRadius: 2,
-  }}>Follow</Button>)}
+  }}>Follow</Button>))}
+ 
       
        <Button onClick={(e)=>{
         e.stopPropagation();
