@@ -462,26 +462,32 @@ router.get("/friends",isAuth,async(req,res)=>{
     const [data,totalFriends,totalFollowings,totalfollowers]=
     await Promise.all([
         prisma.user.findMany({
-      
+       where: {
+    id: {
+      not: user.id
+    }
+  },
         select:{
             id: true,
           image:true,
           username:true,
-        following: {
-  select: {
-    id: true,
-    followerId: true,
-    followingId: true
-  }
-},
-followers: {
-  select: {
-    id: true,
-    followerId: true,
-    followingId: true
-  }
-},
-       
+   following: {
+      where: {
+        followerId: user.id
+      },
+      select: {
+        id: true
+      }
+    },
+
+    followers: {
+      where: {
+        followingId: user.id
+      },
+      select: {
+        id: true
+      }
+    } 
         },
         
       }

@@ -630,7 +630,11 @@ boxShadow: mode === "dark"
       </Box>
  
  <Box sx={{mr:2}}>
-  {friend.following.length?(<Button variant="outlined">following</Button>):(<Button variant="outlined" sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
+  {friend.following.length?(<Button variant="outlined"  sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
+        textTransform: "none",
+        fontWeight: "bold",
+        color: "white",
+        borderColor: mode === "dark" ?"#1185bb" : "#1976D2",}}>following</Button>):(<Button variant="outlined" sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
         textTransform: "none",
         fontWeight: "bold",
         color: "white",

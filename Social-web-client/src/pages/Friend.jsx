@@ -25,6 +25,7 @@ import {
   GroupAdd as FollowingIcon,
   PersonAdd as FollowerIcon,
   Search as SearchIcon,
+  SentimentVeryDissatisfied as SadIcon,
 } from "@mui/icons-material";
 import { fr } from "date-fns/locale";
 export default function Home() {
@@ -32,7 +33,7 @@ export default function Home() {
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg} = useApp();
+  const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg,storeFriendUsername,setStoreFriendUsername} = useApp();
 const followingMutation=useMutation({
   mutationKey:["following"],
   mutationFn:async(id)=>{
@@ -54,6 +55,19 @@ const followingMutation=useMutation({
     queryKey: ["friends"],
     queryFn: async () => Friends(),
   });
+  const friendsData=data?.data||[];
+  const followingData=friendsData.filter((followingFriends)=>followingFriends.following.length>0);
+  const followerData=friendsData.filter((followerFriends)=>followerFriends.followers.length>0);
+  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followingData:followerData;
+
+  const filterFriendData=displayData.filter((friend)=>{
+    
+      const searchValue=storeFriendUsername.toLowerCase().trim();;
+      const search=friend.username?.toLowerCase().includes(searchValue) || false;
+      return search;
+
+    
+  })
   if (isLoading) {
     return (
       <Box
@@ -133,6 +147,8 @@ const followingMutation=useMutation({
               <Box>
                 <Box sx={{ mt: 3, mx: { sm: 3, xs: 1 } }}>
                   <TextField
+                  value={storeFriendUsername}
+                  onChange={(e)=>setStoreFriendUsername(e.target.value)}
                     placeholder="Search Friends by username"
                     fullWidth
                     variant="outlined"
@@ -269,23 +285,45 @@ userSelect: "none"
                   </Box>
                 </Box>
               </Box>
-              <Box  sx={{display:"grid",gridTemplateColumns:{
+              {filterFriendData.length===0?(<Card    sx={{
+      height: "60vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+         gap: 1,
+    bgcolor: "transparent",
+    boxShadow: "none",
+    }}>
+      <Box sx={{display:"flex",gap:1}}>
+             <Typography color="text.secondary" sx={{fontSize:{xs:13,xs:16},fontWeight:"bold"}}>
+      {storeFriendPage === 1
+        ? "No friends found"
+        : storeFriendPage === 2
+          ? "You are not following anyone yet"
+          : "You don't have any followers yet"}
+    </Typography>
+    
+       <SadIcon sx={{color:"red"}}/>
+
+   
+      </Box>
+             
+              </Card>):(<Box  sx={{display:"grid",gridTemplateColumns:{
                    xs: "repeat(1, minmax(0, 1fr))",
       sm: "repeat(2, minmax(0, 1fr))",
                     },gap:1,mx: { sm: 3, xs: 1 } }}>
-    {data?.data?.map((friend) => {
-      
+                   
+    {displayData.map((friend) => {
+  
               return (
                 
                 <Box key={friend.id}>
                   
-                  {storeFriendPage===1 &&(
-                    
 <Card sx={{  p: 2,
           borderRadius: 3,
           minWidth: 0,
           minHeight: 130,
-          boxShadow: 2,bgcolor:"transparent"}}>
+          boxShadow: 2,bgcolor:"transparent",mb:{sm:1}}}>
 <Box sx={{display:"flex"}}>
   {friend.image?(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}>
     <Avatar sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1},}} src={friend.image}/>
@@ -293,15 +331,11 @@ userSelect: "none"
   <Box sx={{mt:{sm:2,xs:1},ml:{sm:3,xs:2},display:"flex",flexDirection:"column"}}>
     <Typography sx={{mb:1,fontWeight:"bold"}}>{friend.username}</Typography>
     <Box sx={{gap:{sm:1,xs:1},display:'flex'}}>
-      {friend.following.some((followingUser)=>
-    
-        followingUser.followingId===Number(auth.id)
-      )?(     <Button variant="contained"  sx={{
+      {friend.following.length>0?
+      (     <Button variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
-    bgcolor: "#2196F3",
-    "&:hover": {
-      bgcolor: "#1976D2",
-    },
+    bgcolor: "green",
+  
     textTransform: "none",
     borderRadius: 2,
   }}>Following</Button>):(     <Button onClick={(e)=>{
@@ -334,13 +368,17 @@ userSelect: "none"
   </Box>
 
 </Box>
-</Card>
+</Card>          
                     
-                  )}
+
+                    
+                  
                 </Box>
               )
             })}
-</Box>
+</Box>)}
+             
+    
             </Card>
 
           
