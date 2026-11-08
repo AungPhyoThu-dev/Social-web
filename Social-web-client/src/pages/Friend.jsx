@@ -14,7 +14,7 @@ import {
   Button
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Friends,AddFriend } from "../fetchers/auth";
+import { Friends,AddFriend,RemoveFriend,RemoveFollowing } from "../fetchers/auth";
 import { useApp, queryClient } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
 import{Following} from "../fetchers/auth";
@@ -35,6 +35,38 @@ export default function Friend() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg,storeFriendUsername,setStoreFriendUsername} = useApp();
+  const removeFriendMutation=useMutation({
+    mutationKey:["removeFriend"],
+    mutationFn:async(id)=>{
+      return RemoveFriend(id)
+    },
+     onSuccess:async()=>{
+      await queryClient.invalidateQueries({
+        queryKey:["friends"],
+      
+      });
+      setGlobalMsg("Friend remove successfully!")
+    },
+    onError:(error)=>{
+      console.log(error)
+    }
+  })
+  const removeFollowingMutation=useMutation({
+    mutationKey:["removeFollowing"],
+    mutationFn:async(id)=>{
+      return RemoveFollowing(id)
+    },
+      onSuccess:async()=>{
+      await queryClient.invalidateQueries({
+        queryKey:["friends"],
+      
+      });
+      setGlobalMsg("Remove following successfully!")
+    },
+    onError:(error)=>{
+      console.log(error)
+    }
+  })
   const addFriendMutation=useMutation({
     mutationKey:["addFriend"],
     mutationFn:async(id)=>{
@@ -51,6 +83,7 @@ export default function Friend() {
       console.log(error)
     }
   })
+
 const followingMutation=useMutation({
   mutationKey:["following"],
   mutationFn:async(id)=>{
@@ -75,10 +108,17 @@ const followingMutation=useMutation({
   
   const friendsData=data?.data||[];
  const myfriendsData=data?.myFriends.map((myfriend)=>{
- return myfriend.userFriendId===auth.id ?myfriend.friendUser:myfriend.userFriend
+ return myfriend.userFriendId===auth.id ?{...myfriend.friendUser,friendShipId:myfriend.id}:{...myfriend.userFriend,friendShipId:myfriend.id}
  })||[];
-  const followingData=friendsData.filter((followingFriends)=>followingFriends.following.length>0);
-  const followerData=friendsData.filter((followerFriends)=>followerFriends.followers.length>0);
+
+  const followerData=friendsData.filter((followerFriends)=>{
+ const isMyFriend=myfriendsData.some((myfriend)=>myfriend.id===followerFriends.id)
+ return !isMyFriend &&     (followerFriends.followers||[]).length>0
+    
+
+  })
+    
+    
   const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followerData:myfriendsData;
 
   const filterFriendData=displayData.filter((friend)=>{
@@ -92,7 +132,7 @@ const followingMutation=useMutation({
   if (isLoading) {
     return (
       <Box
-        sx={{
+        sx={{ 
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -352,7 +392,16 @@ userSelect: "none"
   <Box sx={{mt:{sm:2,xs:1},ml:{sm:3,xs:2},display:"flex",flexDirection:"column"}}>
     <Typography sx={{mb:1,fontWeight:"bold"}}>{friend.username}</Typography>
     <Box  sx={{gap:{sm:1,xs:1},display:'flex'}}>
-      { storeFriendPage===2 ||friend.followers.length>0  ?(     <Button  onClick={(e)=>{
+      {storeFriendPage===3 ?(<Button onClick={(e)=>{
+        e.stopPropagation();
+        removeFriendMutation.mutate(friend.friendShipId)
+      }} variant="contained"  sx={{
+    fontSize: { xs: 11, sm: 14 },
+    bgcolor: "red",
+  
+    textTransform: "none",
+    borderRadius: 2,
+  }}>Unfollow</Button>):storeFriendPage===2 ||(friend.followers||[]).length>0  ?(     <Button  onClick={(e)=>{
       e.stopPropagation();
       addFriendMutation.mutate(friend.id)
     }}  variant="contained"  sx={{
@@ -361,8 +410,11 @@ userSelect: "none"
   
     textTransform: "none",
     borderRadius: 2,
-  }}>Follow Back</Button>):(friend.following.length>0?
-      (     <Button variant="contained"  sx={{
+  }}>Follow Back</Button>):((friend.following||[]).length>0?
+      (     <Button onClick={(e)=>{
+        e.stopPropagation();
+        removeFollowingMutation.mutate(friend.following[0].id)
+      }} variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
     bgcolor: "green",
   

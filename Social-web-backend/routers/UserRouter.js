@@ -588,6 +588,27 @@ return res.status(200).json({data})
     res.status(500).json({error:error.message})
   }
 })
+  router.delete("/removeFollowing/:id",isAuth,async(req,res)=>{
+      console.log("REMOVE FOLLOWING ROUTE CALLED");
+    const{id}=req.params;
+      const user=res.locals.user;
+    try {
+       
+      
+       console.log("Follow ID:", id);
+console.log("Logged-in User ID:", user.id); 
+      const data=await prisma.follow.delete({
+        where:{id:Number(id),
+          followerId:user.id
+        }
+      })
+      return res.status(200).json(data)
+    } catch (error) {
+    
+      console.log("Reomve Following Error",error);
+      res.status(500).json({error:error.message})
+    }
+  })
 
 router.post("/addMyfriend",isAuth,async(req,res)=>{
   const user=res.locals.user;
@@ -618,6 +639,21 @@ friendUserId:Number(friendUserId)
     return res.status(200).json(data)
   } catch (error) {
     console.log("My Friend Errror",error)
+    return res.status(500).json({error:error.message})
+  }
+})
+router.delete("/removeFriend/:id",isAuth,async(req,res)=>{
+  const{id}=req.params;
+  const user=res.locals.user;
+  try {
+    const data=await prisma.friend.delete({
+      where:{id:Number(id),
+        userFriendId  :user.id
+      }
+    })
+    return res.status(200).json(data)
+  } catch (error) {
+    console.log("Friend Delete Error",error)
     return res.status(500).json({error:error.message})
   }
 })

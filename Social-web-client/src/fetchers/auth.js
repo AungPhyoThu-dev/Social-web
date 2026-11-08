@@ -1,5 +1,5 @@
 import { Token } from "@mui/icons-material";
-import { tr } from "date-fns/locale";
+import { th, tr } from "date-fns/locale";
 
 const api=import.meta.env.VITE_API;
 
@@ -761,4 +761,48 @@ try {
 } catch (error) {
   console.log(error)
 }
+}
+
+export async function RemoveFriend(id){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/removeFriend/${id}`,{
+      method:"DELETE",
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+    const data=await res.json();
+    if(!res.ok){
+      throw new Error("fatch to faild removeFriend")
+    }
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function RemoveFollowing(id){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/removeFollowing/${id}`,{
+      method:"DELETE",
+      headers:{
+      
+          Authorization:`Bearer ${token}`
+        
+      }
+    })
+     const data=await res.json();
+    if(!res.ok){
+   
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to remove following");
+    }
+    }
+    return data;
+  } catch (error) {
+     console.log(error);
+    throw error;
+  }
 }
