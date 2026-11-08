@@ -31,6 +31,8 @@ model User{
   jobtitle String?
   company String?
   posts Post[]
+  userFriends Friend[] @relation("userFriend")
+  friendUsers Friend[] @relation("friendUser")
   profileBgColor String? @default("#667eea")
   comments Comment[]
   followers Follow[] @relation("follower")
@@ -115,7 +117,14 @@ model Follow {
   followingId Int
 created DateTime @default(now())
 }
-
+model Friend{
+  id Int @id @default(autoincrement())
+  userFriend User @relation("userFriend",fields:[userFriendId],references:[id])
+  userFriendId Int
+  friendUser User @relation("friendUser",fields:[friendUserId],references:[id])
+  friendUserId Int
+  created DateTime @default(now())
+}
 model SavePost{
   id Int @id @default(autoincrement())
   user User @relation(fields:[userId],references:[id])

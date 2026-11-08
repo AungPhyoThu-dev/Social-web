@@ -14,7 +14,7 @@ import {
   Button
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Friends } from "../fetchers/auth";
+import { Friends,AddFriend } from "../fetchers/auth";
 import { useApp, queryClient } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
 import{Following} from "../fetchers/auth";
@@ -26,14 +26,31 @@ import {
   PersonAdd as FollowerIcon,
   Search as SearchIcon,
   SentimentVeryDissatisfied as SadIcon,
+  Person as MyFriendIcon
 } from "@mui/icons-material";
 import { fr } from "date-fns/locale";
-export default function Home() {
+export default function Friend() {
   const navigate=useNavigate();
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg,storeFriendUsername,setStoreFriendUsername} = useApp();
+  const addFriendMutation=useMutation({
+    mutationKey:["addFriend"],
+    mutationFn:async(id)=>{
+      return AddFriend(id)
+    },
+    onSuccess:async()=>{
+      await queryClient.invalidateQueries({
+        queryKey:["friends"],
+      
+      });
+      setGlobalMsg("Friend added successfully!")
+    },
+    onError:(error)=>{
+      console.log(error)
+    }
+  })
 const followingMutation=useMutation({
   mutationKey:["following"],
   mutationFn:async(id)=>{
@@ -55,10 +72,14 @@ const followingMutation=useMutation({
     queryKey: ["friends"],
     queryFn: async () => Friends(),
   });
+  
   const friendsData=data?.data||[];
+ const myfriendsData=data?.myFriends.map((myfriend)=>{
+ return myfriend.userFriendId===auth.id ?myfriend.friendUser:myfriend.userFriend
+ })||[];
   const followingData=friendsData.filter((followingFriends)=>followingFriends.following.length>0);
   const followerData=friendsData.filter((followerFriends)=>followerFriends.followers.length>0);
-  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followerData:followerData;
+  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followerData:myfriendsData;
 
   const filterFriendData=displayData.filter((friend)=>{
     
@@ -238,7 +259,7 @@ userSelect: "none"
                       {!isMobile && <FollowingIcon />}
                       {!isMobile ? (
                         <Typography>
-                          Followers ({data?.totalFollowings})
+                          Followers ({data?.totalfollowers})
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: { xs: 12 } }}>
@@ -272,14 +293,14 @@ userSelect: "none"
                     }}
                   >
                     <></>
-                    {!isMobile && <FollowingIcon />}
+                    {!isMobile && <MyFriendIcon />}
                     {!isMobile ? (
                       <Typography>
-                        Followers ({data?.totalfollowers})
+                        My Friends ({data?.totalfollowers})
                       </Typography>
                     ) : (
                       <Typography sx={{ fontSize: { xs: 12 } }}>
-                        Followers
+                         My Friends
                       </Typography>
                     )}
                   </Box>
@@ -300,7 +321,7 @@ userSelect: "none"
         ? "No friends found"
         : storeFriendPage === 2
           ? "You don't have any followers yet"
-          : "You don't have any followers yet"}
+          : "You have no friends"}
     </Typography>
     
        <SadIcon sx={{color:"red"}}/>
@@ -323,21 +344,24 @@ userSelect: "none"
           borderRadius: 3,
           minWidth: 0,
           minHeight:130,
-          boxShadow: 2,bgcolor:"transparent",mb:{sm:3,xs:1}}}>
+          boxShadow: 2,bgcolor:"transparent",mb:{sm:2,xs:1}}}>
 <Box sx={{display:"flex"}}>
   {friend.image?(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}>
     <Avatar sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1,sm:0},}} src={friend.image}/>
   </Box>):(<Box sx={{mt:{sm:2},ml:{sm:4,xs:1}}}><Avatar  sx={{width:{sm:70,xs:60},height:{sm:70,xs:60},mt:{xs:1,sm:0},}}><ProfileIcon sx={{fontSize:{sm:50,xs:30}}}/></Avatar></Box>)}
   <Box sx={{mt:{sm:2,xs:1},ml:{sm:3,xs:2},display:"flex",flexDirection:"column"}}>
     <Typography sx={{mb:1,fontWeight:"bold"}}>{friend.username}</Typography>
-    <Box sx={{gap:{sm:1,xs:1},display:'flex'}}>
-      { storeFriendPage===2 ||friend.followers.length>0  ?(     <Button variant="contained"  sx={{
+    <Box  sx={{gap:{sm:1,xs:1},display:'flex'}}>
+      { storeFriendPage===2 ||friend.followers.length>0  ?(     <Button  onClick={(e)=>{
+      e.stopPropagation();
+      addFriendMutation.mutate(friend.id)
+    }}  variant="contained"  sx={{
     fontSize: { xs: 9, sm: 14 },
     bgcolor: "#7E57C2",
   
     textTransform: "none",
     borderRadius: 2,
-  }}>Follow Back</Button>):(storeFriendPage===1||friend.following.length>0?
+  }}>Follow Back</Button>):(friend.following.length>0?
       (     <Button variant="contained"  sx={{
     fontSize: { xs: 11, sm: 14 },
     bgcolor: "green",

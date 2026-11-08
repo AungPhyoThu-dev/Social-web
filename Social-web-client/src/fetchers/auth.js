@@ -744,3 +744,21 @@ export async function Following(id){
     throw error
   }
 }
+export async function AddFriend(friendUserId){
+const token=getToken();
+try {
+  const res=await fetch(`${api}/addMyfriend`,{
+    method:"POST",
+    headers:{
+      Authorization:`Bearer ${token}`,
+       "Content-Type": "application/json"
+    },
+    body:JSON.stringify({
+    friendUserId
+    })
+  })
+  return res.json();
+} catch (error) {
+  console.log(error)
+}
+}

@@ -459,7 +459,7 @@ router.post("/logout",isAuth,async(req,res)=>{
 router.get("/friends",isAuth,async(req,res)=>{
   const user=res.locals.user;
   try {
-    const [data,totalFriends,totalFollowings,totalfollowers]=
+    const [data,totalFriends,totalFollowings,totalfollowers,myFriends]=
     await Promise.all([
         prisma.user.findMany({
        where: {
@@ -507,6 +507,33 @@ router.get("/friends",isAuth,async(req,res)=>{
         followingId:user.id
       }
     }),
+      prisma.friend.findMany({
+      where:{
+        OR:[
+          {userFriendId:user.id},
+          {friendUserId:user.id}
+        ]
+      },
+      include:{
+        userFriend:{
+          select:{
+            id:true,
+            username:true,
+            image:true
+          }
+        },
+          friendUser:{
+          select:{
+            id:true,
+            username:true,
+            image:true
+          }
+        }
+      },
+  
+      
+      
+    })
     ])
    
 
@@ -515,7 +542,8 @@ router.get("/friends",isAuth,async(req,res)=>{
       data,
       totalFriends,
       totalFollowings,
-      totalfollowers
+      totalfollowers,
+      myFriends
     })
   } catch (error) {
      console.log("Friends Error:", error);
@@ -558,6 +586,39 @@ return res.status(200).json({data})
   } catch (error) {
      console.error("FOLLOW ERROR:", error);
     res.status(500).json({error:error.message})
+  }
+})
+
+router.post("/addMyfriend",isAuth,async(req,res)=>{
+  const user=res.locals.user;
+  const {friendUserId}=req.body;
+  try {
+    const ExistUser=await prisma.friend.findFirst({
+      where:{
+      OR:[
+        {userFriendId:user.id,
+          friendUserId:Number(friendUserId)
+        },
+        {userFriendId:Number(friendUserId),
+          friendUserId:user.id
+        }
+        
+      ]
+      }
+    })
+    if(ExistUser){
+      return res.status(400).json({msg:"This user is already friend"})
+    }
+   const data=await prisma.friend.create({
+    data:{
+userFriendId:user.id,
+friendUserId:Number(friendUserId)
+    }
+   })
+    return res.status(200).json(data)
+  } catch (error) {
+    console.log("My Friend Errror",error)
+    return res.status(500).json({error:error.message})
   }
 })
 module.exports={UserRouter:router}
