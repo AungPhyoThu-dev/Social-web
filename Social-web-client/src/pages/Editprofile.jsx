@@ -83,7 +83,8 @@ const inputRef=useRef();
     changeJobTitle,
     setChangeJobTitle,
     selectProfileImage,
-    setSelectProfileImage
+    setSelectProfileImage,
+    
   } = useApp();
   const handleChangeImgae=(e)=>{
     const file=e.target.files?.[0];
@@ -112,11 +113,17 @@ const inputRef=useRef();
     mutationFn: async (username) => {
       return EditUsername(username);
     },
-    onSuccess: async () => {
-      (await queryClient.invalidateQueries({
+    onSuccess: async (data) => {
+      setAuth((prev)=>( {...prev,
+        username:data.username
+      })
+       
+
+      )
+      await queryClient.invalidateQueries({
         queryKey: ["editProfile",auth?.id],
       }),
-        setChangeUsername(""));
+        setChangeUsername("");
       setEditField(null);
       setGlobalMsg("Username updated successfully")
     },

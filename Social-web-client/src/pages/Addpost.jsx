@@ -14,6 +14,8 @@ import {
   Tab,
   InputAdornment,
   Grid,
+  CircularProgress,
+  Alert
 } from "@mui/material";
 import {
   PersonAdd as PeopleIcon,
@@ -21,16 +23,18 @@ import {
   Search as SearchIcon,
   AddPhotoAlternate as AddPhotoIcon,
   Send as SendIcon,
-  Cancel as RemoveIcon
+  Cancel as RemoveIcon,
+
 } from "@mui/icons-material";
 import { useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, useApp } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
-import { AddPost as createPost } from "../fetchers/auth";
+import { AddPost as createPost ,ShowMyFriend,} from "../fetchers/auth";
 ;
 export default function AddPost() {
   const navigate=useNavigate();
+  const {ShowAllMyFriends,setAllShowMyFriends}=useApp();
   const feelings = [
     {id:1, name: "Happy", emoji: "😀" },
     {id:2, name: "Excited", emoji: "😃" },
@@ -154,6 +158,33 @@ addPostMutation.mutate(formData)
   console.log(selectedEmoji);
   console.log(filteredActivity);
   
+  const {data,isLoading,isError,error}=useQuery({
+    queryKey:["My Friends"],
+    queryFn:async()=>ShowMyFriend()
+  })
+  console.log(data)
+   if (isLoading) {   
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "50vh",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          );
+        }
+        if (isError) {
+          return (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <Alert severity="error">{error.message}</Alert>
+            </Box>
+          );
+        }
+  
   return (
     <>
       <Card
@@ -234,6 +265,10 @@ addPostMutation.mutate(formData)
                   mr: 2,
                 }}
                 startIcon={<PeopleIcon />}
+                onClick={(e)=>{
+                  e.stopPropagation();
+                  setAllShowMyFriends(auth.id)
+                }}
               >
                 People
               </Button>
@@ -367,16 +402,18 @@ addPostMutation.mutate(formData)
  
       </Card>
       <Backdrop
-        open={showFeeling !== null}
+        open={showFeeling !== null||ShowAllMyFriends!==null}
         sx={{
           zIndex: 1000,
           userSelect: "none",
         }}
         onClick={() => {
           setShowFeeling(null);
+          setAllShowMyFriends(null);
         }}
       >
-        <Card
+        {showFeeling && (
+           <Card
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -564,6 +601,24 @@ addPostMutation.mutate(formData)
               })}
           </Grid>
         </Card>
+        )}
+       {ShowAllMyFriends && (
+        <Card    onClick={(e) => {
+            e.stopPropagation();
+          }}
+          sx={{
+            width: {
+              sm: 600,
+              xs: "100%",
+              height: {
+                sm:700,
+                xs:500
+              },
+            },
+          }}>
+            <Typography>Hello</Typography>
+          </Card>
+       )}
       </Backdrop>
     </>
   );

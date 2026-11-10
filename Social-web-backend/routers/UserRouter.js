@@ -657,4 +657,5 @@ router.delete("/removeFriend/:id",isAuth,async(req,res)=>{
     return res.status(500).json({error:error.message})
   }
 })
+
 module.exports={UserRouter:router}

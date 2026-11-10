@@ -82,7 +82,7 @@ export default function AppDrawer() {
           textAlign: "center",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
+          height: "100%",
         }}
       >
        <Box
@@ -293,12 +293,7 @@ export default function AppDrawer() {
           )}
         
         </List>
-         <Divider  sx={{
-    borderColor: "grey.400",
-    width: "100%",
-    mt: "auto",
-  }}/>
-        <Box
+          <Box
           sx={{
             display: "flex",
             flexDirection: "row",
@@ -316,7 +311,7 @@ export default function AppDrawer() {
 
           {auth ? (
             <>
-             <Box sx={{display:"flex",flexDirection:"column"}} onClick={()=>{
+             <Box sx={{display:"flex",flexDirection:"column",ml:{xs:4},mt:5}} onClick={()=>{
               navigate(`/profile/${auth.id}`)
              }}>
             
@@ -340,7 +335,7 @@ mb:2
               }}>
               <LogoutIcon sx={{color:"error.main","&:hover":{
                 color:"error.light"
-              }}}/>
+              },ml:{xs:2},mt:5}}/>
             </IconButton>
             </Box>
             

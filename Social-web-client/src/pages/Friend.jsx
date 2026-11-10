@@ -107,6 +107,7 @@ const followingMutation=useMutation({
   });
   
   const friendsData=data?.data||[];
+
  const myfriendsData=data?.myFriends.map((myfriend)=>{
  return myfriend.userFriendId===auth.id ?{...myfriend.friendUser,friendShipId:myfriend.id}:{...myfriend.userFriend,friendShipId:myfriend.id}
  })||[];
@@ -117,9 +118,12 @@ const followingMutation=useMutation({
     
 
   })
+      const followFollowingData=friendsData.filter((followfollwing)=>{
+      const isMyFriend=myfriendsData.some((myfriend)=>myfriend.id===followfollwing.id)
+        return !isMyFriend;
+      })
     
-    
-  const displayData=storeFriendPage===1?friendsData:storeFriendPage===2?followerData:myfriendsData;
+  const displayData=storeFriendPage===1?followFollowingData:storeFriendPage===2?followerData:myfriendsData;
 
   const filterFriendData=displayData.filter((friend)=>{
     
@@ -264,7 +268,7 @@ userSelect: "none"
                       {!isMobile && <FriendIcon />}
                       {!isMobile ? (
                         <Typography>
-                          Friends ({data?.totalFriends})
+                          Friends 
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: { xs: 12 } }}>
@@ -299,7 +303,7 @@ userSelect: "none"
                       {!isMobile && <FollowingIcon />}
                       {!isMobile ? (
                         <Typography>
-                          Followers ({data?.totalfollowers})
+                          Followers 
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: { xs: 12 } }}>
@@ -336,7 +340,7 @@ userSelect: "none"
                     {!isMobile && <MyFriendIcon />}
                     {!isMobile ? (
                       <Typography>
-                        My Friends ({data?.totalfollowers})
+                        My Friends 
                       </Typography>
                     ) : (
                       <Typography sx={{ fontSize: { xs: 12 } }}>
@@ -378,7 +382,7 @@ userSelect: "none"
   
               return (
                 
-                <Box sx={{ overflowY: "auto", scrollbarGutter: "stable" }} key={friend.id}>
+                <Box key={friend.id}>
                   
 <Card sx={{  p: 2,
           borderRadius: 3,

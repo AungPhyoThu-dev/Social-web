@@ -429,6 +429,8 @@ postLikes:{
       },
       followers:true,
       following:true,
+      userFriends: true,
+friendUsers: true,
       postLikes:{
         include:{
           user:true,
@@ -558,6 +560,41 @@ router.delete("/postAdmin/posts/:id",isAuth,isAdmin(),async(req,res)=>{
     return res.json({
   message: "Post deleted successfully"
 });
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+})
+router.get("/myFriends",isAuth,async(req,res)=>{
+  const user=res.locals.user;
+  try {
+    const data=await prisma.friend.findMany({
+  where:{
+    OR:[
+      {userFriendId:user.id},
+      {friendUserId:user.id}
+    ]
+  },
+ select:{
+  id:true,
+  userFriend:{
+    select:{
+      id:true,
+    image:true,
+    username:true,
+    }
+    
+  },
+  friendUser:{
+    select:{
+id:true,
+    image:true,
+    username:true
+    }
+    
+  }
+ }
+    })
+    return res.status(200).json({data})
   } catch (error) {
     res.status(500).json({error:error.message})
   }

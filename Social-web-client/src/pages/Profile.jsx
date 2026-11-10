@@ -250,11 +250,11 @@ await queryClient.invalidateQueries({
               sx={{
                 width: {
                   sm: 120,
-                  xs: 80,
+                  xs: 90,
                 },
                 height: {
                   sm: 120,
-                  xs: 80,
+                  xs: 90,
                 },
                 fontSize: 40,
                 border: "1px solid grey",
@@ -267,11 +267,11 @@ await queryClient.invalidateQueries({
             <Avatar
               sx={{
                 width: {
-                  sm: 100,
+                  sm: 120,
                   xs: 90,
                 },
                 height: {
-                  sm: 100,
+                  sm: 120,
                   xs: 90,
                 },
                 fontSize: 40,
@@ -300,9 +300,10 @@ await queryClient.invalidateQueries({
             sx={{
               color: mode === "dark" ? "white" : "black",
               fontWeight: "bold",
-              mt:4,
+              mt:3,
               fontSize: {
                 sm: 18,
+                xs:17
               },
             }}
           >
@@ -347,7 +348,7 @@ await queryClient.invalidateQueries({
               alignItems: "center",
             }}
           >
-            {data?.follower?.length ?? 0}
+            {data?.friendUsers?.length ?? 0}
             <Typography
               variant="caption"
               sx={{
@@ -355,7 +356,7 @@ await queryClient.invalidateQueries({
                 fontSize: 12,
               }}
             >
-              Followers
+              Friends
             </Typography>
           </Box>
           <Box
