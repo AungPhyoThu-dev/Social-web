@@ -148,7 +148,8 @@ const [userSearch,setUserSearch]=useState("")
 const[postAdminSearch,setPostAdminSearch]=useState("")
 const[storeFriendPage,setStoreFriendPage]=useState(1);
 const [storeFriendUsername,setStoreFriendUsername]=useState("")
-const [ShowAllMyFriends,setAllShowMyFriends]=useState(null)
+const [ShowAllMyFriends,setAllShowMyFriends]=useState(null);
+const [storeSelectValue,setStoreSelectValue]=useState([])
   const theme=useMemo(()=>{
     return createTheme({
       palette:{
@@ -183,7 +184,7 @@ LoadUser()
 
   changeRelation,setChangeRelation,changeGender,setChangeGender,changeCompany,setChangeCompany,changeJobTitle,setChangeJobTitle,selectProfileImage,setSelectProfileImage,adminOpen,setAdminOpen,formControlValue,setFormControlValue,userSearch,setUserSearch,
   formControlPost,setFormControlPost,postAdminSearch,setPostAdminSearch,
-  storeFriendPage,setStoreFriendPage,storeFriendUsername,setStoreFriendUsername,ShowAllMyFriends,setAllShowMyFriends
+  storeFriendPage,setStoreFriendPage,storeFriendUsername,setStoreFriendUsername,ShowAllMyFriends,setAllShowMyFriends,storeSelectValue,setStoreSelectValue
 }}>
 <QueryClientProvider client={queryClient}>
   <RouterProvider router={router}></RouterProvider>

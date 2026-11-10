@@ -15,7 +15,8 @@ import {
   InputAdornment,
   Grid,
   CircularProgress,
-  Alert
+  Alert,
+  Divider
 } from "@mui/material";
 import {
   PersonAdd as PeopleIcon,
@@ -24,13 +25,16 @@ import {
   AddPhotoAlternate as AddPhotoIcon,
   Send as SendIcon,
   Cancel as RemoveIcon,
-
+ AccountCircle as ProfileIcon,
+ RadioButtonUnchecked as UnSelectIcon,
+ RadioButtonChecked as SelectIcon
 } from "@mui/icons-material";
 import { useRef } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, useApp } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
 import { AddPost as createPost ,ShowMyFriend,} from "../fetchers/auth";
+import Profile from "./Profile";
 ;
 export default function AddPost() {
   const navigate=useNavigate();
@@ -92,7 +96,8 @@ export default function AddPost() {
     setStoreImage,
     selectedImage,
     setSelectedImage,
-    setGlobalMsg
+    setGlobalMsg,
+    storeSelectValue,setStoreSelectValue
   } = useApp();
   
   console.log(auth);
@@ -154,7 +159,7 @@ addPostMutation.mutate(formData)
 }
   const filteredEmoji=searchFeeling===""?feelings:feelings.filter((feeling)=>feeling.name.toLocaleLowerCase().includes(searchFeeling.toLocaleLowerCase()))
   const filteredActivity=searchActivity===""?activities:activities.filter((activity)=>activity.name.toLocaleLowerCase().includes(searchActivity.toLocaleLowerCase()))
- 
+
   console.log(selectedEmoji);
   console.log(filteredActivity);
   
@@ -612,11 +617,69 @@ addPostMutation.mutate(formData)
               xs: "100%",
               height: {
                 sm:700,
-                xs:500
+                xs:900
               },
             },
           }}>
-            <Typography>Hello</Typography>
+            <Box sx={{mb:{xs:2},ml:{xs:1}}}>
+                <Typography
+            sx={{
+             
+        
+              mt: 2,
+             
+              fontWeight: "bold",
+            }}
+          >
+            Tag Your Friends
+          </Typography>
+          <Typography variant="caption" sx={{color:"gray"}}>
+            Choose friends to tag in your post
+          </Typography>
+            </Box>
+          <Box sx={{ display: "flex", justifyContent: "center", px: 2,mb:{xs:3} }}>
+            <TextField size="small" fullWidth mx="auto" placeholder="Search friends" />
+          </Box>
+          <Typography color="text.secondary" sx={{fontSize:{xs:11},fontWeight:"bold",mb:{xs:2},ml:1}}>YOUR FRIENDS</Typography>
+          <Box>
+            {data.data?.map((friend)=>{
+              const friendId=friend.friendUser.id;
+      const isSelected=storeSelectValue.includes(friendId)
+                 const filterSelectValue=storeSelectValue.filter((selectValue)=>selectValue!==friendId);
+                
+              return(
+  <Box sx={{ml:{xs:1}}} key={friend.id}>
+    <Box sx={{display:"flex",justifyContent:"space-between"}}>
+      <Box sx={{mb:{xs:2},display:"flex",gap:{xs:1}}}>
+{friend.friendUser?.image?(<Avatar sx={{width:{xs:35},height:{xs:35}}} src={friend.friendUser.image}/>):(<Avatar><ProfileIcon/></Avatar>)}
+<Typography sx={{mt:{xs:1},fontSize:{xs:12}}}>{friend.friendUser.username}</Typography>
+</Box>
+<Box onClick={(e)=>{
+  e.stopPropagation();
+  setStoreSelectValue(friend.id);
+   if(isSelected){
+                  return setStoreSelectValue(filterSelectValue)
+                 }
+                 else{
+                  return setStoreSelectValue([...storeSelectValue,friendId])
+                 };
+}} sx={{mr:1,mt:{xs:1},cursor:"pointer"}}>
+ {isSelected?( <SelectIcon  sx={{fontSize:{xs:18}}}/>):( <UnSelectIcon  sx={{fontSize:{xs:18}}}/>)}
+</Box>
+
+    </Box>
+
+            </Box>
+              )
+            })}
+            <Divider/>
+          <Box sx={{p:2,display:"flex",justifyContent:"space-between"}}>
+            <Typography sx={{fontSize:{xs:13},mt:1}}>{storeSelectValue.length} {storeSelectValue.length>1?"friend":"friends"} selected</Typography>
+           <Button size="small" sx={{bgcolor:"blue",width:{xs:30},height:{xs:30},fontSize:{xs:10}}} variant="contained">
+  Done
+</Button>
+          </Box>
+          </Box>
           </Card>
        )}
       </Backdrop>

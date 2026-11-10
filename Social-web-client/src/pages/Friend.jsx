@@ -34,7 +34,7 @@ export default function Friend() {
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg,storeFriendUsername,setStoreFriendUsername} = useApp();
+  const { mode, storeFriendPage, setStoreFriendPage,auth ,setGlobalMsg,storeFriendUsername,setStoreFriendUsername,} = useApp();
   const removeFriendMutation=useMutation({
     mutationKey:["removeFriend"],
     mutationFn:async(id)=>{
