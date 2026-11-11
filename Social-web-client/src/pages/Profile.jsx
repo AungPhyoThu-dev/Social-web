@@ -35,6 +35,7 @@ import {
   KeyboardArrowUp as HideReplyIcon,
   Favorite as CommentLikeIcon,
    Bookmark as SaveICon,
+   PeopleAlt as TagIcon,
      Apps as OwnPageIcon,
      LockPerson as LockIcon,
      Delete as DeleteIcon,
@@ -330,7 +331,7 @@ await queryClient.invalidateQueries({
               alignItems: "center",
             }}
           >
-            {data?.following?.length ?? 0}
+            {data?.followers?.length ?? 0}
             <Typography
               variant="caption"
               sx={{
@@ -348,7 +349,7 @@ await queryClient.invalidateQueries({
               alignItems: "center",
             }}
           >
-            {data?.friendUsers?.length ?? 0}
+            {data?.userFriends?.length ?? 0}
             <Typography
               variant="caption"
               sx={{
@@ -525,6 +526,64 @@ fontWeight:"bold"
                   ) : (
                     <>
                      <CardContent>
+                                    {post.tagUsers.length > 0 && (
+                          <Box
+                            sx={{
+                              mt: { xs: -2 },
+                              display: "flex",
+                              alignItems: "center",
+                              flexWrap: "wrap",
+                            }}
+                          >
+                            <TagIcon
+                              sx={{
+                                fontSize: { xs: 15 },
+                                color: mode === "dark" ? "#90CAF9" : "#1976D2",
+                                mb:{xs:0.5}
+                              }}
+                            />
+                      
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                ml: 1,
+                                fontSize: { xs: 10 },
+                                color: "text.secondary",
+                              }}
+                            >
+                              tagged
+                            </Typography>
+                      
+                            <Box>
+                              {post.tagUsers.length > 1 ? (
+                                <Typography
+                                  sx={{
+                                    ml: 1,
+                                    fontSize: { xs: 10 },
+                                    fontWeight: 600,
+                                    color: mode === "dark" ? "#90CAF9" : "#1976D2",
+                                  }}
+                                >
+                                  Multiple users
+                                </Typography>
+                              ) : (
+                                post.tagUsers.map((taguser) => (
+                                  <Typography
+                                    key={taguser.id}
+                                    sx={{
+                                      ml: 1,
+                                      fontSize: { xs: 10 },
+                                      fontWeight: 600,
+                                      color: mode === "dark" ? "#90CAF9" : "#1976D2",
+                                    }}
+                                  >
+                                    {taguser.user.username}
+                                  </Typography>
+                                ))
+                              )}
+                            </Box>
+                          </Box>
+                        )}
                         <Typography variant="caption">
                           {isPostLong && !isExpandPost?(
                              <>

@@ -126,8 +126,6 @@ const handleChangeImage=(e)=>{
 const handleRemoveImage=(index)=>{
   
       setSelectedImage((prev)=>prev.filter((_,i)=>i!=index))
-  
-
 }
 const addPostMutation=useMutation({
   mutationKey:["AddPost"],

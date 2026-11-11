@@ -93,7 +93,20 @@ include:{
         include:{
           user:true,
         }
-      }
+      },
+       tagUsers:{
+          include:{
+            user:{
+      select:{
+
+            id:true,
+            username:true,
+        }
+            }
+        
+          }
+      
+        }
       }
     })
     res.json(data)
@@ -431,10 +444,23 @@ router.get("/profile/:id",isAuth,async(req,res)=>{
                   }
                 },
                 comments:true,
-              }
+                       
+               tagUsers:{
+          include:{
+            user:{
+      select:{
+
+            id:true,
+            username:true,
+        }
+            }
+        
+          }
+      
+        }
+              },
             
-               
-              
+        
             }
           }
         },
@@ -446,7 +472,20 @@ postLikes:{
     user:true,
   }
 },
-        comments:true
+        comments:true,
+             tagUsers:{
+          include:{
+            user:{
+      select:{
+
+            id:true,
+            username:true,
+        }
+            }
+        
+          }
+      
+        }
         }
         
       },

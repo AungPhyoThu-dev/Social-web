@@ -31,7 +31,8 @@ import {
   KeyboardArrowDown as ShowReplyIcon,
   KeyboardArrowUp as HideReplyIcon,
   Favorite as CommentLikeIcon,
-  ArrowBack as BackArrowIcon
+  ArrowBack as BackArrowIcon,
+    PeopleAlt as TagIcon
 } from "@mui/icons-material";
 import { useApp, queryClient } from "../ThemeApp";
 import {
@@ -370,6 +371,64 @@ export default function PostDetail() {
         {data?.images?.length>0 ? (
           <>
             <CardContent>
+              {data.tagUsers.length > 0 && (
+    <Box
+      sx={{
+        mt: { xs: -2 },
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <TagIcon
+        sx={{
+          fontSize: { xs: 15 },
+          color: mode === "dark" ? "#90CAF9" : "#1976D2",
+          mb:{xs:0.5}
+        }}
+      />
+
+      <Typography
+        variant="caption"
+        sx={{
+          ml: 1,
+          fontSize: { xs: 10 },
+          color: "text.secondary",
+        }}
+      >
+        tagged
+      </Typography>
+
+      <Box>
+        {data.tagUsers.length > 1 ? (
+          <Typography
+            sx={{
+              ml: 1,
+              fontSize: { xs: 10 },
+              fontWeight: 600,
+              color: mode === "dark" ? "#90CAF9" : "#1976D2",
+            }}
+          >
+            Multiple users
+          </Typography>
+        ) : (
+          data.tagUsers.map((taguser) => (
+            <Typography
+              key={taguser.id}
+              sx={{
+                ml: 1,
+                fontSize: { xs: 10 },
+                fontWeight: 600,
+                color: mode === "dark" ? "#90CAF9" : "#1976D2",
+              }}
+            >
+              {taguser.user.username}
+            </Typography>
+          ))
+        )}
+      </Box>
+    </Box>
+  )}
               <Typography variant="caption">{data.content}</Typography>
             </CardContent>
         

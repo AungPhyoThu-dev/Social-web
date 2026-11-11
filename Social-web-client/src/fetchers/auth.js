@@ -91,7 +91,12 @@ export async function deletePost(postId){
         Authorization:`Bearer ${token}`
       }
     })
-    return res.json();
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.msg || "Failed to delete post");
+    }
+
+    return true;
   } catch (error) {
     console.log(error)
   }

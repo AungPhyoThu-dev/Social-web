@@ -311,9 +311,64 @@ const error=Posterror||Frienderror;
                   {post.images?.length === 1 ? (
                     <>
                     <CardContent>
-                     {post.tagUsers.length>0&&( <Box sx={{mb:{xs:1}}}>
-<TagIcon/>
-                     </Box>)}
+                    {post.tagUsers.length > 0 && (
+    <Box
+      sx={{
+        mt: { xs: -2 },
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <TagIcon
+        sx={{
+          fontSize: { xs: 15 },
+          color: mode === "dark" ? "#90CAF9" : "#1976D2",
+          mb:{xs:0.5}
+        }}
+      />
+
+      <Typography
+        variant="caption"
+        sx={{
+          ml: 1,
+          fontSize: { xs: 10 },
+          color: "text.secondary",
+        }}
+      >
+        tagged
+      </Typography>
+
+      <Box>
+        {post.tagUsers.length > 1 ? (
+          <Typography
+            sx={{
+              ml: 1,
+              fontSize: { xs: 10 },
+              fontWeight: 600,
+              color: mode === "dark" ? "#90CAF9" : "#1976D2",
+            }}
+          >
+            Multiple users
+          </Typography>
+        ) : (
+          post.tagUsers.map((taguser) => (
+            <Typography
+              key={taguser.id}
+              sx={{
+                ml: 1,
+                fontSize: { xs: 10 },
+                fontWeight: 600,
+                color: mode === "dark" ? "#90CAF9" : "#1976D2",
+              }}
+            >
+              {taguser.user.username}
+            </Typography>
+          ))
+        )}
+      </Box>
+    </Box>
+  )}
                         <Typography variant="caption">
                           {isPostLong && !isExpandPost?(
                              <>
@@ -373,13 +428,67 @@ const error=Posterror||Frienderror;
                   ) : (
                     <>
                      <CardContent>
-                          {post.tagUsers.length>0&&( <Box sx={{mt:{xs:-2},display:"flex"}}> 
-                            <TagIcon sx={{fontSize:{xs:15},color:"blue"}}/>
-                            <Typography sx={{ml:{xs:1},fontSize:{xs:12},mb:1}}>tagged </Typography>
-                            <Box>
-                             
-                            </Box>
-                          </Box>)}
+                  
+  {post.tagUsers.length > 0 && (
+    <Box
+      sx={{
+        mt: { xs: -2 },
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <TagIcon
+        sx={{
+          fontSize: { xs: 15 },
+          color: mode === "dark" ? "#90CAF9" : "#1976D2",
+          mb:{xs:0.5}
+        }}
+      />
+
+      <Typography
+        variant="caption"
+        sx={{
+          ml: 1,
+          fontSize: { xs: 10 },
+          color: "text.secondary",
+        }}
+      >
+        tagged
+      </Typography>
+
+      <Box>
+        {post.tagUsers.length > 1 ? (
+          <Typography
+            sx={{
+              ml: 1,
+              fontSize: { xs: 10 },
+              fontWeight: 600,
+              color: mode === "dark" ? "#90CAF9" : "#1976D2",
+            }}
+          >
+            Multiple users
+          </Typography>
+        ) : (
+          post.tagUsers.map((taguser) => (
+            <Typography
+              key={taguser.id}
+              sx={{
+                ml: 1,
+                fontSize: { xs: 10 },
+                fontWeight: 600,
+                color: mode === "dark" ? "#90CAF9" : "#1976D2",
+              }}
+            >
+              {taguser.user.username}
+            </Typography>
+          ))
+        )}
+      </Box>
+    </Box>
+  )}
+
+                         
                          
                         <Typography variant="caption">
                           {isPostLong && !isExpandPost?(
