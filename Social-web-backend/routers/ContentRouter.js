@@ -33,11 +33,25 @@ include:{
           include:{
             user:true,
           }
+        },
+        tagUsers:{
+          include:{
+            user:{
+      select:{
+
+            id:true,
+            username:true,
+        }
+            }
+        
+          }
+      
         }
       }
     })
     res.json(data)
   } catch (error) {
+    console.log("POST ERROR:", error);
     res.status(500).json({error:error.message})
   }
 })
@@ -171,7 +185,7 @@ if (!Number.isInteger(numericPostId) || numericPostId <= 0) { return res.status(
 })
 
 router.post("/posts",isAuth,upload.array("images",4),async(req,res)=>{
-  const {content,feeling,emoji}=req.body;
+  const {content,feeling,emoji,TagFriends}=req.body;
   const user=res.locals.user;
   console.log(req.files);
   if(!content?.trim() && (!req.files||req.files.length===0)){
@@ -199,6 +213,7 @@ const uploadImage=await Promise.all(req.files.map((file)=>uploadCloudinary(file.
    console.log("CLOUDINARY:", uploadImage);
   const DataImage=uploadImage.map((result)=>({url:result.secure_url}));
   console.log("IMAGE DATA:", DataImage);
+  const TagFriendIds=(Array.isArray(TagFriends)?TagFriends:TagFriends?[TagFriends]:[]).map(Number);
      const data=await prisma.post.create({
     data:{
       content,
@@ -215,7 +230,15 @@ const uploadImage=await Promise.all(req.files.map((file)=>uploadCloudinary(file.
       include:{
         images:true,
       }
-  })
+  });
+  if(TagFriendIds.length>0){
+    await prisma.tagUser.createMany({
+data:TagFriendIds.map((id)=>({
+postId:data.id,
+userId:id
+}))
+    })
+  }
   res.json(data)
   } catch (error) {
         console.error("CREATE POST ERROR:", error);

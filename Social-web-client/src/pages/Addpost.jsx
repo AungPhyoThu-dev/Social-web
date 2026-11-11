@@ -29,7 +29,7 @@ import {
  RadioButtonUnchecked as UnSelectIcon,
  RadioButtonChecked as SelectIcon
 } from "@mui/icons-material";
-import { useRef } from "react";
+import { useRef ,useEffect} from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, useApp } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +37,7 @@ import { AddPost as createPost ,ShowMyFriend,} from "../fetchers/auth";
 import Profile from "./Profile";
 ;
 export default function AddPost() {
+
   const navigate=useNavigate();
   const {ShowAllMyFriends,setAllShowMyFriends}=useApp();
   const feelings = [
@@ -103,7 +104,10 @@ export default function AddPost() {
   console.log(auth);
   const contentRef=useRef();
  
-
+const tagMutation=useMutation({
+  mutationKey:["TagFriends"],
+  mutationFn:async()=>console.log("This is storeValue",storeSelectValue)
+})
 const handleChangeImage=(e)=>{
   const files=Array.from(e.target.files);
   setSelectedImage((prev)=>{
@@ -152,7 +156,11 @@ selectedImage.forEach((image)=>{
     formData.append("feeling", selectedEmoji.name);
     formData.append("emoji", selectedEmoji.emoji);
   }
-
+if(storeSelectValue){
+  storeSelectValue.forEach((friendId)=>{
+    formData.append("TagFriends",friendId)
+  })
+}
 setGlobalMsg("New Post is Added")
 addPostMutation.mutate(formData)
 
@@ -236,7 +244,7 @@ addPostMutation.mutate(formData)
             />
           }
           title={
-            selectedEmoji ?(<Typography
+            selectedEmoji  ?(<Typography
               sx={{
                 fontWeight: "bold",
                 fontSize: {
@@ -246,7 +254,7 @@ addPostMutation.mutate(formData)
               }}
             >
               {auth?.username} is {selectedEmoji.name} {selectedEmoji.emoji}
-            </Typography>):(<Typography sx={{fontSize:{
+            </Typography>):storeSelectValue.length>0?(<Typography>{auth?.username} tagged {storeSelectValue.length} {storeSelectValue.length>1?"friends":"friend"}</Typography>):(<Typography sx={{fontSize:{
                sm: 18,
                   xs: 15,
             }}}>{auth?.username}</Typography>)}
@@ -656,7 +664,7 @@ addPostMutation.mutate(formData)
 </Box>
 <Box onClick={(e)=>{
   e.stopPropagation();
-  setStoreSelectValue(friend.id);
+
    if(isSelected){
                   return setStoreSelectValue(filterSelectValue)
                  }
@@ -675,7 +683,10 @@ addPostMutation.mutate(formData)
             <Divider/>
           <Box sx={{p:2,display:"flex",justifyContent:"space-between"}}>
             <Typography sx={{fontSize:{xs:13},mt:1}}>{storeSelectValue.length} {storeSelectValue.length>1?"friend":"friends"} selected</Typography>
-           <Button size="small" sx={{bgcolor:"blue",width:{xs:30},height:{xs:30},fontSize:{xs:10}}} variant="contained">
+           <Button onClick={(e)=>{
+            e.stopPropagation();
+            tagMutation.mutate();
+           }} size="small" sx={{bgcolor:"blue",width:{xs:30},height:{xs:30},fontSize:{xs:10}}} variant="contained">
   Done
 </Button>
           </Box>

@@ -29,7 +29,8 @@ import {
   RemoveCircle as NotInterestIcon,
   Link as CopylinkIcon,
   ThumbDown as UnlikeButton, 
-  ArrowForward as SeeAllIcon
+  ArrowForward as SeeAllIcon,
+  PeopleAlt as TagIcon
 } from "@mui/icons-material";
 import { queryClient, useApp } from "../ThemeApp";
 import { fetchPosts, savePost } from "../fetchers/auth";
@@ -160,6 +161,7 @@ return()=>{
     queryKey: ["posts"],
     queryFn: async () => fetchPosts(),
   });
+  console.log(PostData)
 const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Frienderror}=useQuery({
   queryKey:["friends"],
   queryFn:async()=>Friends()
@@ -309,6 +311,9 @@ const error=Posterror||Frienderror;
                   {post.images?.length === 1 ? (
                     <>
                     <CardContent>
+                     {post.tagUsers.length>0&&( <Box sx={{mb:{xs:1}}}>
+<TagIcon/>
+                     </Box>)}
                         <Typography variant="caption">
                           {isPostLong && !isExpandPost?(
                              <>
@@ -368,6 +373,14 @@ const error=Posterror||Frienderror;
                   ) : (
                     <>
                      <CardContent>
+                          {post.tagUsers.length>0&&( <Box sx={{mt:{xs:-2},display:"flex"}}> 
+                            <TagIcon sx={{fontSize:{xs:15},color:"blue"}}/>
+                            <Typography sx={{ml:{xs:1},fontSize:{xs:12},mb:1}}>tagged </Typography>
+                            <Box>
+                             
+                            </Box>
+                          </Box>)}
+                         
                         <Typography variant="caption">
                           {isPostLong && !isExpandPost?(
                              <>
@@ -618,7 +631,7 @@ boxShadow: mode === "dark"
   <Divider sx={{ mt: 1, mx: 2 }} />
 {FriendData?.data?.slice(0,6).map((friend)=>{
   return(
-    <>
+    <Box key={friend.id}>
      <Box sx={{display:"flex",mt:3,justifyContent:"space-between"}}>
       <Box sx={{display:"flex",gap:2,ml:2}}>
              {friend?.image?(<Avatar  sx={{
@@ -642,7 +655,7 @@ boxShadow: mode === "dark"
  </Box>
     </Box>
      <Divider sx={{ mt: 2, mx: 2 }} />
-    </>
+    </Box>
    
 
     
@@ -960,7 +973,7 @@ boxShadow: mode === "dark"
               sx={{
                 height: {
                   sm: 400,
-                  xs: 300,
+                  xs: 280,
                 },
               }}
               alt="image"

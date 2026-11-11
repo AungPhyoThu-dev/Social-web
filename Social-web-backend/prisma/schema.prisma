@@ -43,6 +43,7 @@ model User{
     isActive Boolean @default(false)
 commentLikes CommentLike[]
 savePosts SavePost[]
+taggedPosts TagUser[]
   created DateTime @default(now())
 }
 
@@ -58,7 +59,7 @@ model Post{
   reports Report[]
   comments Comment[]
 savePosts SavePost[]
-
+tagUsers TagUser[]
   created DateTime @default(now())
 }
 model Report{
@@ -131,6 +132,12 @@ model SavePost{
   userId Int
   post Post @relation(fields:[postId],references:[id])
   postId Int
-
-
+}
+model TagUser{
+  id Int @id @default(autoincrement())
+  post Post @relation(fields:[postId],references:[id],onDelete: Cascade)
+  postId Int
+  user User @relation(fields:[userId],references:[id],onDelete: Cascade)
+  userId Int
+  created DateTime @default(now())
 }
