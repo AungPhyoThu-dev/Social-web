@@ -101,7 +101,7 @@ export default function AddPost() {
     storeSelectValue,setStoreSelectValue
   } = useApp();
   
-  console.log(auth);
+ 
   const contentRef=useRef();
  
 const tagMutation=useMutation({
@@ -166,14 +166,13 @@ addPostMutation.mutate(formData)
   const filteredEmoji=searchFeeling===""?feelings:feelings.filter((feeling)=>feeling.name.toLocaleLowerCase().includes(searchFeeling.toLocaleLowerCase()))
   const filteredActivity=searchActivity===""?activities:activities.filter((activity)=>activity.name.toLocaleLowerCase().includes(searchActivity.toLocaleLowerCase()))
 
-  console.log(selectedEmoji);
-  console.log(filteredActivity);
+  
   
   const {data,isLoading,isError,error}=useQuery({
     queryKey:["My Friends"],
     queryFn:async()=>ShowMyFriend()
   })
-  console.log(data)
+
    if (isLoading) {   
           return (
             <Box
@@ -242,20 +241,18 @@ addPostMutation.mutate(formData)
             />
           }
           title={
-            selectedEmoji  ?(<Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: {
-                  sm: 22,
-                  xs: 15,
-                },
-              }}
-            >
-              {auth?.username} is {selectedEmoji.name} {selectedEmoji.emoji}
-            </Typography>):storeSelectValue.length>0?(<Typography>{auth?.username} tagged {storeSelectValue.length} {storeSelectValue.length>1?"friends":"friend"}</Typography>):(<Typography sx={{fontSize:{
-               sm: 18,
-                  xs: 15,
-            }}}>{auth?.username}</Typography>)}
+            <Typography>
+  {auth?.username}
+
+  {selectedEmoji && (
+    <> is {selectedEmoji.name} {selectedEmoji.emoji}</>
+  )}
+
+  {storeSelectValue.length > 0 && (
+    <> tagged {storeSelectValue.length} friends</>
+  )}
+</Typography>
+          }
            
             
           
@@ -683,6 +680,7 @@ addPostMutation.mutate(formData)
             <Typography sx={{fontSize:{xs:13},mt:1}}>{storeSelectValue.length} {storeSelectValue.length>1?"friend":"friends"} selected</Typography>
            <Button onClick={(e)=>{
             e.stopPropagation();
+            setAllShowMyFriends(null)
             tagMutation.mutate();
            }} size="small" sx={{bgcolor:"blue",width:{xs:30},height:{xs:30},fontSize:{xs:10}}} variant="contained">
   Done

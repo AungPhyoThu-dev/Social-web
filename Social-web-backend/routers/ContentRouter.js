@@ -159,9 +159,7 @@ router.post("/comments",isAuth,async(req,res)=>{
     const {content,postId}=req.body;
 const user=res.locals.user;
 
-console.log("REQ BODY:", req.body);
-console.log("POST ID:", postId);
-console.log("POST ID TYPE:", typeof postId);
+
 const numericPostId=Number(postId);
 if (!Number.isInteger(numericPostId) || numericPostId <= 0) { return res.status(400).json({ error: "Invalid post ID" }); }
     const data=await prisma.comment.create({
@@ -200,7 +198,7 @@ if (!Number.isInteger(numericPostId) || numericPostId <= 0) { return res.status(
 router.post("/posts",isAuth,upload.array("images",4),async(req,res)=>{
   const {content,feeling,emoji,TagFriends}=req.body;
   const user=res.locals.user;
-  console.log(req.files);
+ 
   if(!content?.trim() && (!req.files||req.files.length===0)){
     return res.status(400).json({msg:"Content or Iamge is required"})
   }
@@ -223,9 +221,9 @@ router.post("/posts",isAuth,upload.array("images",4),async(req,res)=>{
   }
   try{
 const uploadImage=await Promise.all(req.files.map((file)=>uploadCloudinary(file.buffer)));
-   console.log("CLOUDINARY:", uploadImage);
+  
   const DataImage=uploadImage.map((result)=>({url:result.secure_url}));
-  console.log("IMAGE DATA:", DataImage);
+
   const TagFriendIds=(Array.isArray(TagFriends)?TagFriends:TagFriends?[TagFriends]:[]).map(Number);
      const data=await prisma.post.create({
     data:{

@@ -72,11 +72,7 @@ export default function Home() {
   
   
 useEffect(()=>{
-    console.log({
-    showSaveCard,
-    viewImage,
-    showLike,
-  });
+  
 const shouldLockScroll=
 showSaveCard!=null|| viewImage!=null|| showLike!=null;
 document.body.style.overflow=shouldLockScroll?"hidden":"";
@@ -161,7 +157,7 @@ return()=>{
     queryKey: ["posts"],
     queryFn: async () => fetchPosts(),
   });
-  console.log(PostData)
+  
 const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Frienderror}=useQuery({
   queryKey:["friends"],
   queryFn:async()=>Friends()
@@ -232,7 +228,7 @@ const error=Posterror||Frienderror;
                     },
                   }}
                   onClick={() => {
-                    console.log("postDetail");
+         
                     setAddComment(null);
                     navigate(`/postDetail/${post.id}`);
                   }}
@@ -300,7 +296,7 @@ const error=Posterror||Frienderror;
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowSaveCard(post.id);
-                          console.log(showSaveCard);
+                        
                         }}
                       >
                         <ShowSaveIcon />
@@ -752,11 +748,11 @@ boxShadow: mode === "dark"
       </Box>
  
  <Box sx={{mr:2}}>
-  {friend.following.length?(<Button variant="outlined"  sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
+  {friend.following.length?(<Button variant="outlined"  sx={{bgcolor:"green",textTransform:"none",  borderRadius: 5,
         textTransform: "none",
         fontWeight: "bold",
         color: "white",
-        borderColor: mode === "dark" ?"#1185bb" : "#1976D2",}}>following</Button>):(<Button variant="outlined" sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
+        borderColor: mode === "dark" ?"green" : "green",}}>following</Button>):(<Button variant="outlined" sx={{bgcolor:"#2563EB",textTransform:"none",  borderRadius: 5,
         textTransform: "none",
         fontWeight: "bold",
         color: "white",

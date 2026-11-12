@@ -43,7 +43,7 @@ export default function Postadmin() {
     queryKey: ["postadmin"],
     queryFn: async () => PostAdmin(),
   });
-  console.log(data);
+ 
    const deletPostMutation = useMutation({
     mutationKey: ["post"],
     mutationFn: async (postId) => {
@@ -214,7 +214,7 @@ export default function Postadmin() {
             <ReportIcon
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/admin/report/${params.row.id}`);
+                setGlobalMsg("This post has no reports")
               }}
               sx={{ fontSize: { sm: 20, xs: 18 }, color: "green" }}
             />
@@ -474,7 +474,7 @@ export default function Postadmin() {
                       value="banusers"
                       sx={{ fontSize: { xs: 12, sm: 14 } }}
                     >
-                      Banned
+                      Report
                     </MenuItem>
                   </Select>
                 </FormControl>

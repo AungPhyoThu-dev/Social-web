@@ -553,14 +553,14 @@ router.get("/friends",isAuth,async(req,res)=>{
 router.post("/following/:id",isAuth,async(req,res)=>{
   const user=res.locals.user;
   const followingId=Number(req.params.id);
-  console.log("Following ID:", followingId);
+  
   try {
     const TargetUser=await prisma.user.findUnique({
       where:{
         id:followingId
       }
     });
-    console.log("TargetUser:", TargetUser);
+    
     if(!TargetUser){
       return res.status(400).json({msg:"TargetUser not found"})
     };
@@ -581,7 +581,7 @@ const data=await prisma.follow.create({
   }
 
 })
-console.log("Created Follow:", data);
+
 return res.status(200).json({data})
   } catch (error) {
      console.error("FOLLOW ERROR:", error);
@@ -589,14 +589,13 @@ return res.status(200).json({data})
   }
 })
   router.delete("/removeFollowing/:id",isAuth,async(req,res)=>{
-      console.log("REMOVE FOLLOWING ROUTE CALLED");
+   
     const{id}=req.params;
       const user=res.locals.user;
     try {
        
       
-       console.log("Follow ID:", id);
-console.log("Logged-in User ID:", user.id); 
+      
       const data=await prisma.follow.delete({
         where:{id:Number(id),
           followerId:user.id

@@ -329,13 +329,13 @@ export default function AppDrawer() {
             <Box sx={{
 mb:2
             }}>
-              <IconButton onClick={(e)=>{
+              <IconButton                disableRipple
+  disableFocusRipple onClick={(e)=>{
+   
               e.stopPropagation();
               logoutMutation.mutate()
               }}>
-              <LogoutIcon sx={{color:"error.main","&:hover":{
-                color:"error.light"
-              },ml:{xs:2},mt:5}}/>
+              <LogoutIcon sx={{color:"error.main",ml:{xs:2},mt:5}}/>
             </IconButton>
             </Box>
             

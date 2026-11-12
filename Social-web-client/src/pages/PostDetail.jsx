@@ -35,6 +35,7 @@ import {
     PeopleAlt as TagIcon
 } from "@mui/icons-material";
 import { useApp, queryClient } from "../ThemeApp";
+import { useTheme, useMediaQuery } from "@mui/material";
 import {
   postDetail,
   savePost,
@@ -50,6 +51,8 @@ import { postReplies } from "../fetchers/auth";
 import { useNavigate } from "react-router-dom";
 import { commentLike, RemoveCommentLike, AddComment } from "../fetchers/auth";
 export default function PostDetail() {
+   const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const { id } = useParams();
   const {
@@ -266,10 +269,10 @@ export default function PostDetail() {
     );
   }
   const isLike = data.postLikes?.some((like) => like.userId === auth.id);
- console.log(data)
+ 
   return (
     <Box>
-      <Box onClick={(e)=>{
+      {isMobile&&(<Box onClick={(e)=>{
         e.stopPropagation();
         navigate(-1)
       }}   sx={{
@@ -293,7 +296,8 @@ export default function PostDetail() {
         }}>
 <BackArrowIcon sx={{  color: "text.primary",}}/>
 <Typography>Back</Typography>
-      </Box>
+      </Box>)}
+      
       <Card
         sx={{
           maxWidth: "100%",

@@ -52,9 +52,11 @@ import { useParams } from "react-router-dom";
 import { useApp, queryClient } from "../ThemeApp";
 import { formatRelative } from "date-fns";
 import { fetchPosts, savePost,deletePost } from "../fetchers/auth";
-
+import { useTheme, useMediaQuery } from "@mui/material";
  
 export default function Profile() {
+     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
  const navigate=useNavigate();
   const {
      showSaveCard,
@@ -202,7 +204,7 @@ await queryClient.invalidateQueries({
     <Box>
 
       <Container maxWidth="md" disableGutters>
-           <Box onClick={(e)=>{
+        {isMobile&&(<Box onClick={(e)=>{
                 e.stopPropagation();
                 navigate(-1)
               }}   sx={{
@@ -226,7 +228,8 @@ await queryClient.invalidateQueries({
                 }}>
         <BackArrowIcon sx={{  color: "text.primary",}}/>
         <Typography>Back</Typography>
-              </Box>
+              </Box>)}
+           
          <Paper
         elevation={0}
        sx={{
@@ -494,7 +497,7 @@ fontWeight:"bold"
                       <IconButton
                         onClick={() => {
                           setShowSaveCard(post.id);
-                          console.log(showSaveCard);
+                          
                         }}
                       >
                         <ShowSaveIcon />

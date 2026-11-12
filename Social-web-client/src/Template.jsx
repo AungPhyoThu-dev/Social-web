@@ -20,7 +20,14 @@ export default function Template(){
         horizontal:"center",
         vertical:"center",
         alignItem:"center"
-      }} open={Boolean(globalMsg)}  autoHideDuration={5000} onClose={()=>setGlobalMsg(null)} message={globalMsg}></Snackbar>
+      }} open={Boolean(globalMsg)}  autoHideDuration={5000} onClose={()=>setGlobalMsg(null)} message={globalMsg}  slotProps={{
+  content: {
+    sx: {
+      justifyContent: "center",
+      textAlign: "center",
+    },
+  },
+}}></Snackbar>
     </Box>
   )
 }

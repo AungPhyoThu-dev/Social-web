@@ -38,9 +38,10 @@ export default function Login() {
       setGlobalMsg("Login Success")
     }
   });
-console.log(auth);
+
  return(
-  <Box  sx={{
+  <Box  >
+    {isMobile?( <Box sx={{
         minHeight: "100vh",
     backgroundImage: `url(${logo2})`,
     backgroundSize: "cover",
@@ -51,18 +52,20 @@ console.log(auth);
     alignItems:"flex-end",
           pb: 3,
       px: 0,
-
+position:'relative'
   }}>
-    {isMobile?(   <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%" }}>
       <Card  sx={{
   width:"100%",
     mx: "auto",
     
-    borderTopLeftRadius:10,
-    borderTopRightRadius:10,
-    boxShadow: 3,
-    height:"auto",
-    mb:{xs:-3.2}
+    
+    
+    position:"absolute",
+     mb: 0,
+    bgcolor:"black",
+     bottom: 0,
+
   }}>
       <CardContent  sx={{ p: 2}}>
         <Box sx={{maxWidth:500,display:"flex", mx: "auto",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
@@ -71,22 +74,52 @@ console.log(auth);
       {error && <Alert sx={{mb:2}} severity="warning">{error}</Alert>}
       <form onSubmit={ handleSubmit} style={{width:"100%"}}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="caption" sx={{mb:1}}>Username</Typography>
+          <Typography variant="caption" sx={{mb:1, color: "#fff"}}>Username</Typography>
           <TextField
             onChange={() =>setError(null)}
-          sx={{mb:1}}
+        sx={{
+    mb: 1,
+    "& .MuiInputBase-input": {
+      color: "#fff",
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#777",
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#fff",
+    },
+    "& .MuiInputBase-input::placeholder": {
+      color: "#bbb",
+      opacity: 1,
+    },
+  }}
             placeholder="Username"
             name="username"
             autoComplete="off"
             fullWidth 
             inputRef={usernameRef}
           />
-          <Typography variant="caption" sx={{ mt: 2,mb:1 }}>
+          <Typography variant="caption" sx={{ mt: 2,mb:1 ,color:"white"}}>
             Password
           </Typography>
           <TextField
             onChange={() => setError(null)}
-          sx={{mb:1}}
+        sx={{
+    mb: 1,
+    "& .MuiInputBase-input": {
+      color: "#fff",
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#777",
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#fff",
+    },
+    "& .MuiInputBase-input::placeholder": {
+      color: "#bbb",
+      opacity: 1,
+    },
+  }}
             type="password"
             name="password"
             placeholder="Password"
@@ -96,11 +129,11 @@ console.log(auth);
             
           />
 
-          <Button type="submit" variant="contained" sx={{ mt: 2,mb:2 }}>
+          <Button type="submit" variant="contained" sx={{ mt: 2,mb:2,  bgcolor: "#2196F3", }}>
             Submit
           </Button>
           <Box  sx={{display:"flex",justifyContent:"center"}}>
-              <Typography>
+              <Typography sx={{color:'white'}}>
         Don't have account?{" "}
         <Link to="/register" >
         Register
@@ -113,7 +146,17 @@ console.log(auth);
     </Box>
       </CardContent>
     </Card>
-    </Box> ):(    <Card  sx={{
+    </Box>
+    </Box>   ):(  <Box  sx={{display:"flex",
+      justifyContent:"center",
+      alignItems:"center",
+         minHeight: "100vh",
+         width:"100%",
+          px: 2,
+  boxSizing: "border-box",
+    }}>
+      <Card  sx={{
+             width:"100%",
     maxWidth: 500,
     
     mx: "auto",
@@ -155,7 +198,7 @@ console.log(auth);
             
           />
 
-          <Button type="submit" variant="contained" sx={{ mt: 2,mb:2 }}>
+          <Button type="submit" variant="contained" sx={{ mt: 2,mb:2,  bgcolor: "#2196F3" }}>
             Submit
           </Button>
           <Box  sx={{display:"flex",justifyContent:"center"}}>
@@ -171,7 +214,8 @@ console.log(auth);
       </form>
     </Box>
       </CardContent>
-    </Card>)}
+    </Card>
+    </Box>  )}
   </Box>
 
   )

@@ -154,7 +154,7 @@ const followingMutation=useMutation({
       </Box>
     );
   }
-  console.log(data);
+
   return (
     <Box >
       <Container disableGutters maxWidth="md" >

@@ -156,8 +156,8 @@ const inputRef=useRef();
        
       }),
         setGlobalMsg("Profile image updated successfully");
-          console.log("Backend response:", data);
-  console.log("Selected image:", selectProfileImage);
+        
+  
     },
     onError:(error)=>{
       console.log(error)

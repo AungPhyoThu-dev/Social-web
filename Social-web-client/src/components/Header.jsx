@@ -33,7 +33,7 @@ export default function Header(){
   }}>
     <MenuIcon  color="inherit"/>
   </IconButton>
-  <Typography sx={{color:mode==="dark"?"blue":"#F5F5F5",fontSize:"18px",fontWeight:"bold",ml:1}}>SOCIAL</Typography>
+  <Typography sx={{color:mode==="dark"?"#2196F3":"#F5F5F5",fontSize:"18px",fontWeight:"bold",ml:1}}>SOCIAL</Typography>
 <Box sx={{flexGrow:1} }/>
   <IconButton  onClick={()=>{
             navigate(`/addpost`)
