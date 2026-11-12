@@ -6,10 +6,13 @@ import AppDrawer from "./components/AppDrawer";
 export default function Template(){
   const {globalMsg,setGlobalMsg}=useApp();
   return (
-    <Box>
+    <Box sx={{ minHeight: "100vh", width: "100%" }}>
       <Header/>
       <AppDrawer/>
-      <Container maxWidth="lg" sx={{ mt: 4,}} disableGutters>
+      <Container maxWidth="lg"   sx={{
+    mt: 0,
+    p: 0,
+  }} disableGutters>
        
         <Outlet/>
       </Container>

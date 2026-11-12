@@ -1,4 +1,5 @@
 import { AppBar,Toolbar,IconButton,Typography,Box ,Slide,useScrollTrigger,useTheme,useMediaQuery,Avatar} from "@mui/material";
+import { useLocation } from "react-router-dom";
 import {Public as LogIcon,
   Add as AddIcon,
   LightMode as LightModeIcon,
@@ -11,6 +12,8 @@ import { useApp } from "../ThemeApp";
 import { useNavigate } from "react-router-dom";
 
 export default function Header(){
+  const location=useLocation();
+  const isAuthPage=location.pathname==="/login"||location.pathname==="/register"
   const navigate=useNavigate();
   const theme=useTheme();
   const isMobile=useMediaQuery(theme.breakpoints.down("sm"));
@@ -21,7 +24,7 @@ export default function Header(){
   const moveTrigger=isMobile?trigger:false;
   
   return (
-    <Box sx={{mb:10, }}>
+    <Box sx={{mb:isAuthPage?0:10 }}>
       <Slide appear={false} direction="down" in={!moveTrigger} >
          <AppBar position="fixed" sx={{zIndex: 1200}} >
 <Toolbar >
