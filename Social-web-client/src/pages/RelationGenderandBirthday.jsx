@@ -67,7 +67,10 @@ export default function RelationandGenderBirthday() {
       }
     })
   return (
-    <Box sx={{mt:3}}>
+    <Box sx={{mt:3,    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    boxSizing: "border-box",}}>
       <Card
         sx={{ width: { sm: 700, xs: "100%" }, bgcolor: "white", height: "100vh" }}
       >

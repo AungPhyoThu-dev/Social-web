@@ -30,10 +30,11 @@ import {
   Link as CopylinkIcon,
   ThumbDown as UnlikeButton, 
   ArrowForward as SeeAllIcon,
-  PeopleAlt as TagIcon
+  PeopleAlt as TagIcon,
+   Flag as ReportIcon,
 } from "@mui/icons-material";
 import { queryClient, useApp } from "../ThemeApp";
-import { fetchPosts, savePost } from "../fetchers/auth";
+import { fetchPosts, savePost,RemoveReport,AddReport } from "../fetchers/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatRelative } from "date-fns";
 import { useEffect } from "react";
@@ -66,13 +67,13 @@ export default function Home() {
     expandPost,
     isExpandPost,
     expandedPost,
-    setExpandedPost
-
+    setExpandedPost,
+saveReport,setSaveReport
   } = useApp();
   
   
 useEffect(()=>{
-  
+ 
 const shouldLockScroll=
 showSaveCard!=null|| viewImage!=null|| showLike!=null;
 document.body.style.overflow=shouldLockScroll?"hidden":"";
@@ -80,6 +81,34 @@ return()=>{
   document.body.style.overflow=""
 }
 },[showSaveCard, viewImage, showLike])
+const addReportMutation=useMutation({
+  mutationKey:["AddReport"],
+  mutationFn:async(postId)=>{
+    return AddReport(postId);
+  },
+  onSuccess:async(data,postId)=>{
+    (setSaveReport((prev)=>[...prev,postId])),
+    setShowSaveCard(null);
+    setGlobalMsg("Post is reported")
+  },
+  onError:(error)=>{
+    console.log(error.message)
+  }
+})
+ const removeReportMutation=useMutation({
+    mutationKey:["RemoveReport"],
+    mutationFn:async(postId)=>{
+      return RemoveReport(postId)
+    },
+    onSuccess:async(data,postId)=>{
+   setSaveReport((prev)=>prev.filter((id)=>id!==postId))
+   setShowSaveCard(null);
+   setGlobalMsg("Remove Report successful")
+    },
+      onError:(error)=>{
+    console.log(error.message)
+  }
+  })
   const PostLike = useMutation({
     mutationKey: ["PostLike"],
     mutationFn: async (postId) => {
@@ -157,7 +186,7 @@ return()=>{
     queryKey: ["posts"],
     queryFn: async () => fetchPosts(),
   });
-  
+  console.log(PostData)
 const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Frienderror}=useQuery({
   queryKey:["friends"],
   queryFn:async()=>Friends()
@@ -166,6 +195,7 @@ const {data:FriendData,isLoading:FriendLoading,isError:FriendError,error:Friende
 const isLoading=PostLoading||FriendLoading;
 const isError=PostError||FriendError;
 const error=Posterror||Frienderror;
+
   useEffect(() => {
     if (!isLoading) {
       const timer = setTimeout(() => {
@@ -790,7 +820,7 @@ boxShadow: mode === "dark"
 
                 bottom: 0,
 
-                height: 160,
+                height: 200,
 
                 width: {
                   xs: "100%",
@@ -811,7 +841,7 @@ boxShadow: mode === "dark"
                     sm: 550,
                     xs: "90%",
                   },
-                  height: 110,
+                  height: 150,
                   mt: 3,
                   bgcolor: "#0F172A",
                 }}
@@ -920,6 +950,42 @@ boxShadow: mode === "dark"
                       }}
                     >
                       Copy Link
+                    </Typography>
+                  </Button>
+                </Box>
+                <Divider/>
+                  <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                    const isReported=saveReport.includes(showSaveCard);
+                    if(isReported){
+                      removeReportMutation.mutate(showSaveCard)
+                    }else{
+                      addReportMutation.mutate(showSaveCard)
+                    }
+                    }}
+                    sx={{
+                      textTransform: "none",
+                      justifyContent: "flex-start",
+                      width: "100%",
+                    }}
+                  >
+                    {saveReport.includes(showSaveCard)?( <ReportIcon sx={{ mr: 3, color: "red" }} />):( <ReportIcon sx={{ mr: 3, color: "white" }} />)}
+                   
+                    <Typography
+                      sx={{
+                        fontFamily: "Arial, sans-serif",
+                        fontWeight: "bold",
+                        fontSize: 15,
+                        color: "white",
+                      }}
+                    >
+                      {saveReport.includes(showSaveCard)?"Remove Report":"Report"}
                     </Typography>
                   </Button>
                 </Box>

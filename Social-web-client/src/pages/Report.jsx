@@ -42,19 +42,19 @@ export default function Report(){
             id:report.id,
             image:report.user?.image,
             username:report.user?.username,
-            reason:report.reason,
+           
             user:report.user?.name
         }))
         const columns=[
             {field:"user",headerName:"Profile",flex:1,  renderCell: (params) => {
                 
                     return(
-              <Box sx={{ display: "flex", alignItems: "center", gap: {sm:3,xs:2} ,mt:isMobile?3:3,ml:isMobile?2:2}}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: {sm:3,xs:2} ,mt:isMobile?3:3,ml:isMobile?1:2}}>
                        
                       <Avatar src={params.row.image || ""} sx={{ width: {sm:50,xs:40}, height: {sm:50,xs:40} }}>
                         {params.row.user?.[0]?.toUpperCase()}
                       </Avatar>
-                      {!isMobile&&(<Typography sx={{fontSize:13}}>{params.row.user}</Typography>)}
+                      <Typography sx={{fontSize:13}}>{params.row.user}</Typography>
                       
                     </Box>
                   
@@ -62,18 +62,12 @@ export default function Report(){
                   }},
             {field:"username",headerName:"Username",flex:1,renderCell:(params)=>{
                 return(
-                    <Box sx={{mt:{sm:5,xs:5,},}}>
+                    <Box sx={{mt:{sm:5,xs:4.5,},ml:{xs:2,sm:2}}}>
                         <Typography sx={{fontSize:isMobile?12:13}}>{params.row.username}</Typography>
                     </Box>
                 )
             }},
-            {field:"reason",headerName:"Reason",flex:1,renderCell:(params)=>{
-                return(
-                    <Box sx={{mt:{sm:5,xs:5,},ml:1}}>
-                        <Typography sx={{fontSize:isMobile?11:13}}>{params.row.reason}</Typography>
-                    </Box>
-                )
-            }}
+           
         ];
      
     return(

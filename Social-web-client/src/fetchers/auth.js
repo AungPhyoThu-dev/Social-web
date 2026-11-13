@@ -1,4 +1,4 @@
-import { Token } from "@mui/icons-material";
+import { ThreeDRotation, Token } from "@mui/icons-material";
 import { th, tr } from "date-fns/locale";
 
 const api=import.meta.env.VITE_API;
@@ -826,6 +826,52 @@ export async function ShowMyFriend(){
     return data;
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+}
+export async function AddReport(postId){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/report`,{
+      method:"POST",
+      headers:{
+          "Content-Type": "application/json",
+        Authorization:`Bearer ${token}`
+      },
+      body:JSON.stringify({
+        postId,
+      })
+    })
+    if(!res.ok){
+      throw new Error("Fatch failed AddReport")
+    }
+    const data=await res.json();
+    return data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function RemoveReport(postId){
+  const token=getToken();
+  try {
+    const res=await fetch(`${api}/removeReport`,{
+      method:"DELETE",
+      headers:{
+"Content-Type": "application/json",
+      Authorization:`Bearer ${token}`
+      },
+      body:JSON.stringify({
+        postId
+      })
+    });
+    if(!res.ok){
+      throw Error("Fatch failed RemoveReport")
+    }
+    const data=await res.json();
+    return data
+  } catch (error) {
+    console.log(error)
     throw error;
   }
 }

@@ -46,6 +46,12 @@ include:{
         
           }
       
+        },
+        reports:{
+          include:{
+            user:true,
+            
+          }
         }
       }
     })

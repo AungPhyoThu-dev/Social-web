@@ -656,5 +656,39 @@ router.delete("/removeFriend/:id",isAuth,async(req,res)=>{
     return res.status(500).json({error:error.message})
   }
 })
+router.post("/report",isAuth,async(req,res)=>{
+  const {postId}=req.body;
+  const user=res.locals.user;
+  if(!postId){
+    return res.status(400).json({msg:"Post is required"})
+  }
+  try {
+    const data=await prisma.report.create({
+      data:{
+        userId:user.id,
+        postId:Number(postId),
 
+      }
+    })
+    return res.json(data)
+  } catch (error) {
+      console.log("Report Add Error",error)
+    return res.status(500).json({error:error.message})
+  }
+});
+router.delete("/removeReport",isAuth,async(req,res)=>{
+  const {postId}=req.body;
+  const user=res.locals.user;
+  try {
+    await prisma.report.deleteMany({
+      where:{postId:Number(postId),
+        userId:user.id
+      }
+    })
+    return res.json({msg:"Remove Report"})
+  } catch (error) {
+    console.log("Remove Report Error",error)
+    return res.status(500).json({error:error.message})
+  }
+})
 module.exports={UserRouter:router}
